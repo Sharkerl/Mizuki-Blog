@@ -375,7 +375,7 @@ export const navBarConfig: NavBarConfig = {
 };
 
 export const profileConfig: ProfileConfig = {
-	avatar: "assets/images/avatar.webp", // 相对于 /src 目录。如果以 '/' 开头，则相对于 /public 目录
+	avatar: "assets/images/Freiren_head.webp", // 相对于 /src 目录。如果以 '/' 开头，则相对于 /public 目录
 	name: "Sharkerl",
 	bio: "大千世界, 去看看吧!",
 	typewriter: {
@@ -398,6 +398,7 @@ export const profileConfig: ProfileConfig = {
 			icon: "fa7-brands:github",
 			url: "https://github.com/sharkerl",
 		},
+
 		// {
 		// 	name: "Codeberg",
 		// 	icon: "simple-icons:codeberg",
@@ -493,7 +494,7 @@ export const announcementConfig: AnnouncementConfig = {
 };
 
 export const musicPlayerConfig: MusicPlayerConfig = {
-	enable: false, // 启用音乐播放器功能
+	enable: true, // 启用音乐播放器功能
 	showFloatingPlayer: true, // 显示悬浮播放器 UI
 	floatingEntryMode: "fab", // 悬浮入口模式："default" 为独立悬浮播放器，"fab" 为集成到通用 FAB 组
 	mode: "local", // 音乐播放器模式，可选 "local" 或 "meting"

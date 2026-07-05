@@ -184,7 +184,7 @@ export const timelineData: TimelineItem[] = [
 			"Enjoy the school life and create many sweet memories",
 			"Defeated the COVID-19 pandemic",
 		],
-		icon: "material-symbols:code_off",
+		icon: "material-symbols:school",
 		color: "#7C3AED",
 	},
 	{
@@ -203,7 +203,7 @@ export const timelineData: TimelineItem[] = [
 			"Learned basic loops and conditional statements",
 			"Developed interest in programming",
 		],
-		icon: "material-symbols:code",
+		icon: "material-symbols:school",
 		color: "#7C3AED",
 	},
 	{
@@ -213,9 +213,12 @@ export const timelineData: TimelineItem[] = [
 			"Graduated from junior high school and entered senior high school, swimming in the sea of knowledge.",
 		type: "education",
 		startDate: "2026-09-01",
+		endDate: "",
+		location: "Nanjing, Jiangsu",
+		organization: "High School Affiliated to Nanjing Normal University",
 		skills: ["Advanced Subjects", "Advanced Programming Concepts"],
 		achievements: ["Deployed my first personal website powered by Mizuki."],
-		icon: "material-symbols:code",
+		icon: "material-symbols:school",
 		color: "#3a9fed",
 	},
 ];
