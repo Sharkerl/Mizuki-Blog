@@ -3,7 +3,7 @@ title: Beginning C++20 第2章总结 —— 基础数据类型入门
 Description: 《Beginning C++20》（第6版）第2章"基础数据类型入门"的全面总结，涵盖所有整数类型、浮点类型、类型转换、格式化和 Unicode 字符。
 published: 2026-07-05
 date: 2026-07-05
-draft: true
+draft: false
 tags: ["C++", "Fundamental Types"]
 category: "Cpp"
 pinned: false

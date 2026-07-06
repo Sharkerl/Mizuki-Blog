@@ -3,7 +3,7 @@ title: BeginningCpp_Conclusion
 Description: An article that list the important context of the book BeginningCpp20 
 published: 2026-03-14
 date: 2026-03-14
-draft: true
+draft: false
 tags: ["C++"]
 category: "Cpp"
 pinned: true
