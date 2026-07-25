@@ -32,3 +32,9 @@ Download [PicGo][PicGoGithub] <-点击此处跳转
 :::tip
 `jsdelivr` 是一个免费的 CDN 服务，能够将 Github 上的静态资源加速访问. 官网: [https://www.jsdelivr.com/](https://www.jsdelivr.com/)
 :::
+
+### Notice
+
+- size_of_per_file <= **25MiB** (if using git bash, max is 100MiB)
+- 使用 fastgithub 的用户, 上传可能会失败, 解决方法为**使用代理VPN**或**直连**
+  请打开 PicGo -> Settings -> 网络 -> 设置代理和镜像地址 设置代理

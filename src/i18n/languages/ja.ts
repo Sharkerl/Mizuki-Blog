@@ -14,6 +14,8 @@ export const ja: Translation = {
 	[Key.navAbout]: "情報",
 	[Key.navOthers]: "その他",
 
+	[Key.footprints]: "足跡",
+
 	[Key.tags]: "タグ",
 	[Key.categories]: "カテゴリー",
 	[Key.recentPosts]: "最近の投稿",

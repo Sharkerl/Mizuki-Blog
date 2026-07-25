@@ -11,6 +11,8 @@ enum I18nKey {
 	navAbout = "navAbout",
 	navOthers = "navOthers",
 
+	footprints = "footprints",
+
 	tags = "tags",
 	categories = "categories",
 	recentPosts = "recentPosts",

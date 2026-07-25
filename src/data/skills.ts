@@ -28,7 +28,7 @@ export const skillsData: Skill[] = [
 		category: "backend",
 		level: "beginner",
 		experience: { years: 1, months: 4 },
-		projects: ["game-engine", "system-optimization"],
+		projects: ["game-engine", "system-optimization"], // 2025. 7
 		color: "#00599C",
 	},
 
@@ -41,7 +41,7 @@ export const skillsData: Skill[] = [
 		icon: "logos:git-icon",
 		category: "tools",
 		level: "beginner",
-		experience: { years: 0, months: 3 },
+		experience: { years: 0, months: 6 }, // 2026.2
 		color: "#F05032",
 	},
 	{
@@ -51,8 +51,50 @@ export const skillsData: Skill[] = [
 			"A lightweight but powerful code editor with a rich plugin ecosystem.",
 		icon: "logos:visual-studio-code",
 		category: "tools",
-		level: "beginner",
-		experience: { years: 2, months: 6 },
+		level: "intermediate",
+		experience: { years: 3, months: 6 }, // 2023
 		color: "#007ACC",
+	},
+	{
+		id: "c",
+		name: "C",
+		description:
+			"A general-purpose programming language with a rich ecosystem.",
+		icon: "logos:c",
+		category: "backend",
+		level: "beginner",
+		experience: { years: 0, months: 2 }, // 2026.7
+		color: "#555555",
+	},
+	{
+		id: "vs",
+		name: "Visual Studio",
+		description:
+			"Visual Studio: IDE and Code Editor for Software Development",
+		icon: "logos:visual-studio",
+		category: "tools",
+		level: "intermediate",
+		experience: { years: 1, months: 4 }, // 2025.7
+		color: "#c300ff",
+	},
+	{
+		id: "clion",
+		name: "CLion",
+		description: "CLion: IDE for C and C++ Development",
+		icon: "logos:clion",
+		category: "tools",
+		level: "beginner",
+		experience: { years: 0, months: 2 }, // 2026.7
+		color: "#555555",
+	},
+	{
+		id: "claude",
+		name: "Claude Code",
+		description: "Agentic coding tool for developers.",
+		icon: "logos:claude-icon",
+		category: "tools",
+		level: "beginner",
+		experience: { years: 0, months: 2 }, // 2026.7
+		color: "#e07400",
 	},
 ];
