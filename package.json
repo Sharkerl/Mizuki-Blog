@@ -13,7 +13,7 @@
 		"update-anime": "node scripts/update-anime.mjs",
 		"update-bangumi": "node scripts/update-bangumi.mjs",
 		"update-bilibili": "node scripts/update-bilibili.mjs",
-		"build": "node scripts/update-anime.mjs && astro build && pagefind --site dist && node scripts/compress-fonts.js",
+		"build": "node ./scripts/generate-locations.js && scripts/update-anime.mjs && astro build && pagefind --site dist && node scripts/compress-fonts.js",
 		"submit": "node scripts/indexnow-submit.js",
 		"preview": "astro preview",
 		"astro": "astro",
@@ -104,7 +104,6 @@
 		"fontmin": "^1.1.1",
 		"glob": "^13.0.6",
 		"globals": "^17.4.0",
-		"gray-matter": "^4.0.3",
 		"postcss-import": "^16.1.1",
 		"postcss-nesting": "^13.0.2",
 		"prettier": "^3.8.1",
@@ -113,7 +112,7 @@
 		"svelte-eslint-parser": "^1.6.0",
 		"typescript-eslint": "^8.57.1"
 	},
-	"packageManager": "pnpm@11.17.0",
+	"packageManager": "pnpm@10.22.0",
 	"pnpm": {
 		"overrides": {
 			"@emmetio/css-parser": "https://codeload.github.com/ramya-rao-a/css-parser/tar.gz/370c480ac103bd17c7bcfb34bf5d577dc40d3660"

@@ -55,3 +55,11 @@ src/data/bilibili-data.json
 
 # Mizuki-Content
 Mizuki-Content/
+
+
+.astro/
+.claude/
+.devin/
+.vscode/
+.env.example
+.aiignore

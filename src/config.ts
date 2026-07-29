@@ -14,7 +14,8 @@
 	SakuraConfig,
 	ShareConfig,
 	SidebarLayoutConfig,
-	SiteConfig,
+    SiteConfig,
+    MapConfig, // TODO
 } from "./types/config";
 import { LinkPreset } from "./types/config";
 
@@ -47,7 +48,8 @@ export const siteConfig: SiteConfig = {
 		skills: true, // 技能页面开关
 		timeline: true, // 时间线页面开关
 		albums: true, // 相册页面开关
-		devices: true, // 设备页面开关
+        devices: true, // 设备页面开关
+        map: true, // 地图页面开关
 	},
 
 	// 顶栏标题配置
@@ -730,3 +732,14 @@ export const widgetConfigs = {
 } as const;
 
 // umamiConfig相关配置已移动至astro.config.mjs中,统计脚本请自行在Layout.astro文件的<head>中插入
+
+// 地图配置
+export const MapConfig = {
+	// 默认聚焦点
+	defaultCenter: {
+		lat: 32.0415, // 纬度
+		lon: 118.7674, // 经度
+		zoom: 12, // 缩放级别（Leaflet 常用 0-19）
+	},
+};
+
