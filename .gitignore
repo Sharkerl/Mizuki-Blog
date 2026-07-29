@@ -63,3 +63,4 @@ Mizuki-Content/
 .vscode/
 .env.example
 .aiignore
+content/
