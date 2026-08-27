@@ -1,0 +1,37 @@
+---
+interface Props {
+	onZoomIn: () => void;
+	onZoomOut: () => void;
+	onReset: () => void;
+}
+
+const { onZoomIn, onZoomOut, onReset } = Astro.props;
+---
+
+<div class="map-zoom">
+	<button
+		class="map-zoom-btn btn-regular rounded-lg h-10 w-10 active:scale-90"
+		data-action="zoom-in"
+		aria-label="Zoom in"
+		title="Zoom in"
+		on:click={onZoomIn}
+	>+
+</button>
+	<button
+		class="map-zoom-btn btn-regular rounded-lg h-10 w-10 active:scale-90"
+		data-action="zoom-out"
+		aria-label="Zoom out"
+		title="Zoom out"
+		on:click={onZoomOut}
+	>-
+</button>
+	<button
+		class="map-zoom-btn btn-regular rounded-lg h-10 w-10 active:scale-90"
+		data-action="reset"
+		aria-label="Reset view"
+		title="Reset view"
+		on:click={onReset}
+	>⌂
+	</button>
+	</button>
+</div>

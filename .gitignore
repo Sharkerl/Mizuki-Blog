@@ -64,3 +64,5 @@ Mizuki-Content/
 .env.example
 .aiignore
 content/
+
+public/tiles/

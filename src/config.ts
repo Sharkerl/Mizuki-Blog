@@ -14,8 +14,7 @@
 	SakuraConfig,
 	ShareConfig,
 	SidebarLayoutConfig,
-    SiteConfig,
-    MapConfig, // TODO
+	SiteConfig,
 } from "./types/config";
 import { LinkPreset } from "./types/config";
 
@@ -48,8 +47,8 @@ export const siteConfig: SiteConfig = {
 		skills: true, // 技能页面开关
 		timeline: true, // 时间线页面开关
 		albums: true, // 相册页面开关
-        devices: true, // 设备页面开关
-        map: true, // 地图页面开关
+		devices: true, // 设备页面开关
+		footprint: true, // 足迹页面开关
 	},
 
 	// 顶栏标题配置
@@ -327,7 +326,7 @@ export const navBarConfig: NavBarConfig = {
 					icon: "material-symbols:photo-library",
 				},
 				{
-					name: "Footprints",
+					name: "Footprint",
 					url: "/map/",
 					icon: "material-symbols:location-on",
 				},
@@ -742,4 +741,3 @@ export const MapConfig = {
 		zoom: 12, // 缩放级别（Leaflet 常用 0-19）
 	},
 };
-

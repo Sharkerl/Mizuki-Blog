@@ -97,4 +97,14 @@ export const skillsData: Skill[] = [
 		experience: { years: 0, months: 2 }, // 2026.7
 		color: "#e07400",
 	},
+	{
+		id: "codex",
+		name: "Codex",
+		description: "Agentic coding tool for developers with modern GUI",
+		icon: "logos:openai-icon",
+		category: "tools",
+		level: "beginner",
+		experience: { years: 0, months: 2 }, // 2026.7
+		color: "#e07400",
+	},
 ];

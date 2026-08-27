@@ -14,7 +14,10 @@ export const en: Translation = {
 	[Key.navAbout]: "About",
 	[Key.navOthers]: "Others",
 
-	[Key.footprints]: "Footprints",
+	[Key.footprint]: "Footprint",
+	[Key.footprintSubtitle]: "Where my articles happened",
+	[Key.footprintEmpty]: "No location data yet",
+	[Key.footprintViewPost]: "View Post",
 
 	[Key.tags]: "Tags",
 	[Key.categories]: "Categories",

@@ -305,3 +305,29 @@ export async function getRelatedPosts(
 
 	return result;
 }
+
+export function parseLocation(
+	location?: string,
+): { lat: number; lng: number } | null {
+	if (!location) {
+		return null;
+	}
+
+	const parts = location.split(",").map((part) => part.trim());
+	if (parts.length !== 2) {
+		return null;
+	}
+
+	const lat = Number.parseFloat(parts[0]);
+	const lng = Number.parseFloat(parts[1]);
+
+	if (Number.isNaN(lat) || Number.isNaN(lng)) {
+		return null;
+	}
+
+	if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+		return null;
+	}
+
+	return { lat, lng };
+}

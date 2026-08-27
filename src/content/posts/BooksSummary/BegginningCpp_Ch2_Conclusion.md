@@ -4,7 +4,7 @@ Description: 《Beginning C++20》（第6版）第2章"基础数据类型入门"
 published: 2026-07-05
 date: 2026-07-05
 draft: false
-tags: ["C++", "Fundamental Types"]
+tags: ["C++"]
 category: "Cpp"
 pinned: false
 auther: Sharkerl

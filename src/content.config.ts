@@ -33,6 +33,8 @@ const postsCollection = defineCollection({
 		/* Custom permalink - 自定义固定链接，优先级高于 alias */
 		permalink: z.string().optional(),
 
+		location: z.string().optional().default(""),
+
 		/* For internal use */
 		prevTitle: z.string().default(""),
 		prevSlug: z.string().default(""),

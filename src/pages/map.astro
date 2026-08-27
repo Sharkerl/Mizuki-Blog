@@ -1,0 +1,59 @@
+---
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { siteConfig } from "../config";
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
+import { Map } from "@components/features/map";
+import { getSortedPostsList, parseLocation } from "@utils/content-utils";
+
+if (!siteConfig.featurePages.footprint) {
+	return Astro.redirect("/404/");
+}
+
+const allPosts = await getSortedPostsList();
+
+const posts = allPosts
+	.map((post) => {
+		const location = parseLocation(post.data.location);
+		if (!location) return null;
+		return {
+			id: post.id,
+			title: post.data.title,
+			url: post.url ?? `/posts/${post.id}/`,
+			lat: location.lat,
+			lng: location.lng,
+		};
+	})
+	.filter(
+		(
+			post,
+		): post is {
+			id: string;
+			title: string;
+			url: string;
+			lat: number;
+			lng: number;
+		} => post !== null,
+	);
+
+const title = i18n(I18nKey.footprint);
+const subtitle = i18n(I18nKey.footprintSubtitle);
+---
+
+<MainGridLayout title={title} description={subtitle}>
+	<script>
+		import("../scripts/right-sidebar-layout.js");
+	</script>
+
+	<div
+		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative"
+	>
+		<div class="card-base z-10 p-6 sm:p-9 relative w-full">
+			<Map
+				posts={posts}
+				emptyText={i18n(I18nKey.footprintEmpty)}
+				viewPostText={i18n(I18nKey.footprintViewPost)}
+			/>
+		</div>
+	</div>
+</MainGridLayout>

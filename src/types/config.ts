@@ -67,7 +67,7 @@ export interface SiteConfig {
 		timeline: boolean; // 时间线页面开关
 		albums: boolean; // 相册页面开关
 		devices: boolean; // 设备页面开关
-		map: boolean; // 地图页面开关
+		footprint: boolean; // 地图页面开关
 	};
 
 	// 文章列表布局配置
@@ -213,8 +213,8 @@ export enum LinkPreset {
 	Albums = 6,
 	Projects = 7,
 	Skills = 8,
-    Timeline = 9,
-    Map = 10
+	Timeline = 9,
+	Map = 10,
 }
 
 export interface NavBarLink {
@@ -524,4 +524,3 @@ export interface ThirdPartyAnalyticsConfig {
 	enable: boolean; // 是否启用第三方统计（Microsoft Clarity），默认关闭
 	clarityId?: string; // Clarity 项目 ID
 }
-

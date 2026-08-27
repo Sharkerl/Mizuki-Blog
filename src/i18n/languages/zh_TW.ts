@@ -14,7 +14,10 @@ export const zh_TW: Translation = {
 	[Key.navAbout]: "關於",
 	[Key.navOthers]: "其他",
 
-	[Key.footprints]: "足跡",
+	[Key.footprint]: "足跡",
+	[Key.footprintSubtitle]: "文章足跡地圖",
+	[Key.footprintEmpty]: "尚無位置資訊",
+	[Key.footprintViewPost]: "查看文章",
 
 	[Key.tags]: "標籤",
 	[Key.categories]: "分類",

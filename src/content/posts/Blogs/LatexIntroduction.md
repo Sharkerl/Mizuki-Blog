@@ -2,10 +2,11 @@
 title: LaTex Introduction
 Description: LaTex Introduction
 tags: ["LaTex"]
-category: "Code"
+category: "Tools"
 date: 2026-05-22
 published: 2026-07-01
 draft: false
+location: 32.0, 118.9
 ---
 
 LaTex的使用示例:

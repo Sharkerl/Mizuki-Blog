@@ -1,0 +1,21 @@
+---
+interface Props {
+	post: {
+		id: string;
+		title: string;
+		url: string;
+		lat: number;
+		lng: number;
+	};
+	viewPostText: string;
+}
+
+const { post, viewPostText } = Astro.props;
+---
+
+<div class="map-popup-row">
+	<span class="map-popup-title">{post.title}</span>
+	<a class="map-popup-link" href={post.url}>
+		{viewPostText || "View Post"}
+	</a>
+</div>

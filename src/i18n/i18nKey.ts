@@ -11,7 +11,10 @@ enum I18nKey {
 	navAbout = "navAbout",
 	navOthers = "navOthers",
 
-	footprints = "footprints",
+	footprint = "footprint",
+	footprintSubtitle = "footprintSubtitle",
+	footprintEmpty = "footprintEmpty ",
+	footprintViewPost = "footprintViewPost",
 
 	tags = "tags",
 	categories = "categories",

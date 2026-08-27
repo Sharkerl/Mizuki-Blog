@@ -1,0 +1,377 @@
+---
+import type { MapPost } from "./types";
+
+const { posts = [], emptyText = "", viewPostText = "" } = Astro.props;
+
+let initialCenter = [32.06, 118.78];
+let initialZoom = 5;
+---
+
+<div class="map-page">
+	{
+		posts.length === 0 ? (
+			<div class="map-empty">
+				<iconify-icon
+					icon="material-symbols:map-outline"
+					width="64"
+					height="64"
+					class="map-empty-icon"
+				/>
+				<p class="map-empty-text">{emptyText}</p>
+			</div>
+		) : (
+			<div id="footprint-map" class="map-container" />
+		)
+	}
+
+	<link rel="stylesheet" href="/vendor/leaflet/leaflet.css" crossorigin="" />
+	<script is:inline src="/vendor/leaflet/leaflet.js" crossorigin=""></script>
+	<script define:vars={{ posts, viewPostText, initialCenter, initialZoom }}>
+		const waitForLeaflet = function () {
+			return new Promise(function (resolve) {
+				function check() {
+					if (
+						typeof L !== "undefined" &&
+						document.getElementById("footprint-map")
+					) {
+						resolve(true);
+					} else {
+						requestAnimationFrame(check);
+					}
+				}
+				check();
+			});
+		};
+
+		(async function () {
+			await waitForLeaflet();
+
+			const mapEl = document.getElementById("footprint-map");
+			if (!mapEl) {
+				return;
+			}
+
+			const map = L.map("footprint-map", {
+				scrollWheelZoom: false,
+				attributionControl: false,
+			});
+
+			const initialCenterValue = initialCenter;
+			const initialZoomValue = initialZoom;
+
+			map.setView(initialCenterValue, initialZoomValue);
+			map.invalidateSize();
+
+			const tileBounds = L.latLngBounds([
+				[15, 95],
+				[55, 150],
+			]);
+			map.setMaxBounds(tileBounds);
+
+			L.tileLayer("/tiles/{z}/{x}/{y}.png", {
+				minZoom: 4,
+				maxZoom: 6,
+			}).addTo(map);
+
+			const markers = L.layerGroup().addTo(map);
+
+			const dotIcon = L.divIcon({
+				className: "map-marker-root",
+				html:
+					'<div style="position:relative;width:16px;height:16px;">' +
+					'<div style="position:absolute;inset:0;border-radius:50%;background:var(--primary);border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.35);"></div>' +
+					"</div>",
+				iconSize: [16, 16],
+				iconAnchor: [8, 8],
+				popupAnchor: [0, -12],
+			});
+
+			const grouped = new Map();
+			posts.forEach(function (post) {
+				const key = post.lat + "," + post.lng;
+				if (!grouped.has(key)) {
+					grouped.set(key, {
+						lat: post.lat,
+						lng: post.lng,
+						items: [],
+					});
+				}
+				const current = grouped.get(key);
+				current.items.push(post);
+			});
+
+			grouped.forEach(function (group) {
+				const marker = L.marker([group.lat, group.lng], {
+					icon: dotIcon,
+				});
+				const popupContent = document.createElement("div");
+				popupContent.className = "map-popup";
+
+				if (group.items.length === 1) {
+					const post = group.items[0];
+
+					const title = document.createElement("div");
+					title.className = "map-popup-title";
+					title.textContent = post.title;
+
+					const link = document.createElement("a");
+					link.href = post.url;
+					link.className = "map-popup-link";
+					link.textContent = viewPostText || "View Post";
+
+					popupContent.appendChild(title);
+					popupContent.appendChild(link);
+				} else {
+					const heading = document.createElement("div");
+					heading.className = "map-popup-title";
+					heading.textContent =
+						group.items.length + " posts at this location";
+					popupContent.appendChild(heading);
+
+					const list = document.createElement("div");
+					list.style.marginTop = "0.4rem";
+					list.style.display = "flex";
+					list.style.flexDirection = "column";
+					list.style.gap = "0.35rem";
+
+					group.items.forEach(function (post) {
+						const item = document.createElement("div");
+						item.style.display = "flex";
+						item.style.alignItems = "center";
+						item.style.justifyContent = "space-between";
+						item.style.gap = "0.5rem";
+
+						const title = document.createElement("span");
+						title.textContent = post.title;
+						title.style.overflow = "hidden";
+						title.style.textOverflow = "ellipsis";
+						title.style.whiteSpace = "nowrap";
+
+						const link = document.createElement("a");
+						link.href = post.url;
+						link.className = "map-popup-link";
+						link.textContent = viewPostText || "View Post";
+						link.style.flexShrink = "0";
+
+						item.appendChild(title);
+						item.appendChild(link);
+						list.appendChild(item);
+					});
+
+					popupContent.appendChild(list);
+				}
+
+				marker.bindPopup(popupContent, {
+					maxWidth: 280,
+					className: "map-popup",
+				});
+				markers.addLayer(marker);
+			});
+
+			const latlngs = posts.map(function (post) {
+				return [post.lat, post.lng];
+			});
+			if (latlngs.length > 0) {
+				const bounds = L.latLngBounds(latlngs);
+				map.fitBounds(bounds, { padding: [48, 48], maxZoom: 5 });
+			}
+
+			function bindZoomButtons() {
+				const zoomInBtn = document.querySelector(
+					'.map-zoom-btn[data-action="zoom-in"]',
+				);
+				const zoomOutBtn = document.querySelector(
+					'.map-zoom-btn[data-action="zoom-out"]',
+				);
+				const resetBtn = document.querySelector(
+					'.map-zoom-btn[data-action="reset"]',
+				);
+
+				zoomInBtn?.addEventListener("click", function () {
+					map.zoomIn();
+				});
+				zoomOutBtn?.addEventListener("click", function () {
+					map.zoomOut();
+				});
+				resetBtn?.addEventListener("click", function () {
+					map.setView(initialCenterValue, initialZoomValue);
+					map.invalidateSize();
+				});
+			}
+
+			if (document.readyState === "loading") {
+				document.addEventListener("DOMContentLoaded", bindZoomButtons);
+			} else {
+				bindZoomButtons();
+			}
+		})();
+	</script>
+
+	<div class="map-zoom">
+		<button
+			class="map-zoom-btn btn-regular rounded-lg h-10 w-10 active:scale-90"
+			data-action="zoom-in"
+			aria-label="Zoom in"
+			title="Zoom in">+</button
+		>
+		<button
+			class="map-zoom-btn btn-regular rounded-lg h-10 w-10 active:scale-90"
+			data-action="zoom-out"
+			aria-label="Zoom out"
+			title="Zoom out">-</button
+		>
+		<button
+			class="map-zoom-btn btn-regular rounded-lg h-10 w-10 active:scale-90"
+			data-action="reset"
+			aria-label="Reset view"
+			title="Reset view">⤾</button
+		>
+	</div>
+</div>
+
+<style>
+	.map-page {
+		position: relative;
+	}
+
+	.map-empty {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		gap: 0.75rem;
+		padding: 5rem 1rem;
+	}
+
+	.map-empty-icon {
+		color: rgb(0 0 0 / 0.15);
+	}
+
+	:global(.dark) .map-empty-icon {
+		color: rgb(255 255 255 / 0.18);
+	}
+
+	.map-empty-text {
+		font-size: 1.125rem;
+		line-height: 1.5;
+		color: rgb(0 0 0 / 0.45);
+	}
+
+	:global(.dark) .map-empty-text {
+		color: rgb(255 255 255 / 0.5);
+	}
+
+	.map-container {
+		width: 100%;
+		height: clamp(22rem, 50vh, 38rem);
+		border-radius: var(--radius-large, 1rem);
+		overflow: hidden;
+		padding: 8px;
+		background: color-mix(in oklch, var(--card-bg) 92%, transparent);
+	}
+
+	.map-container .leaflet-container {
+		border-radius: calc(var(--radius-large, 1rem) - 8px);
+		background: var(--card-bg);
+	}
+
+	:global(.dark) .map-container .leaflet-tile {
+		filter: brightness(0.85) contrast(1.05);
+	}
+
+	:global(.dark) .map-container .leaflet-container {
+		background: #0f172a;
+	}
+
+	.map-popup-title {
+		font-weight: 600;
+		margin-bottom: 0.35rem;
+		color: var(--popup-content);
+		font-family: var(--font-sans, system-ui, sans-serif);
+	}
+
+	.map-popup-link {
+		color: var(--popup-link-light);
+		text-decoration: none;
+		font-family: var(--font-sans, system-ui, sans-serif);
+	}
+
+	:global(.dark) .map-popup-link {
+		color: var(--popup-link-dark);
+	}
+
+	.map-popup-link:hover {
+		text-decoration: underline;
+	}
+
+	.leaflet-popup.map-popup .leaflet-popup-content-wrapper {
+		border-radius: var(--radius-large, 1rem);
+		background: var(--card-bg);
+		color: var(--popup-content);
+		font-family: var(--font-sans, system-ui, sans-serif);
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+	}
+
+	:global(.dark) .leaflet-popup.map-popup .leaflet-popup-content-wrapper {
+		color: var(--popup-content);
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+	}
+
+	.leaflet-popup.map-popup .leaflet-popup-content {
+		margin: 12px 16px;
+		line-height: 1.5;
+		font-family: inherit;
+	}
+	.leaflet-popup.map-popup .leaflet-popup-tip {
+		background: var(--card-bg);
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+	}
+
+	:global(.dark) .leaflet-popup.map-popup .leaflet-popup-tip {
+		background: var(--card-bg);
+	}
+
+	.leaflet-popup.map-popup .leaflet-popup-close-button {
+		color: var(--btn-content);
+	}
+	:global(.leaflet-control-zoom) {
+		display: none;
+	}
+
+	.map-zoom {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		display: flex;
+		gap: 6px;
+		z-index: 1000;
+		user-select: none;
+	}
+
+	.map-marker-root {
+		position: relative !important;
+		background: transparent !important;
+		border: none !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		width: 16px !important;
+		height: 16px !important;
+		overflow: visible !important;
+	}
+
+	.map-marker-root::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		border-radius: 50%;
+		background: var(--primary);
+		border: 2px solid white;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+		pointer-events: none;
+	}
+
+	:global(.dark) .map-marker-root::before {
+		border-color: rgba(255, 255, 255, 0.9);
+	}
+</style>

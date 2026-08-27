@@ -1,11 +1,12 @@
 ---
 title: Image Hosting by Github and PicGo
 Description: Image Hosting Service
-tags: ["Convenient, Personal"]
-category: "Code"
+tags: ["PC Enviroment plus"]
+category: "Tools"
 date: 2026-07-02
 published: 2026-07-03
 draft: false
+location: 32.0, 118.9
 ---
 
 ## 使用 $Github$ 和 $PicGo$ 搭建个人图床

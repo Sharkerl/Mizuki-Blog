@@ -1,0 +1,42 @@
+---
+import MapPopupItem from "./MapPopupItem.astro";
+
+interface Props {
+	group: {
+		lat: number;
+		lng: number;
+		items: Array<{
+			id: string;
+			title: string;
+			url: string;
+			lat: number;
+			lng: number;
+		}>;
+	};
+	viewPostText: string;
+}
+
+const { group, viewPostText } = Astro.props;
+---
+
+<div class="map-popup">
+	{
+		group.items.length === 1 ? (
+			<>
+				<div class="map-popup-title">{group.items[0].title}</div>
+				<a class="map-popup-link" href={group.items[0].url}>
+					{viewPostText || "View Post"}
+				</a>
+			</>
+		) : (
+			<>
+				<div class="map-popup-title">{group.items.length} posts at this location</div>
+				<div class="map-popup-list">
+					{group.items.map((post) => (
+						<MapPopupItem post={post} viewPostText={viewPostText} />
+					))}
+				</div>
+			</>
+		)
+	}
+</div>
