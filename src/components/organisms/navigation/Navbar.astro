@@ -1,7 +1,7 @@
 ---
 import { Icon } from "astro-icon/components"
 
-import { navBarConfig, siteConfig } from "../../../config"
+import { navBarConfig, sidebarLayoutConfig, siteConfig } from "../../../config"
 import { LinkPresets } from "../../../constants/link-presets"
 import { LinkPreset, type NavBarLink } from "../../../types/config"
 import { url } from "../../../utils/url-utils"
@@ -118,7 +118,11 @@ const iconWebpSrc = hasIconPngFallback ? iconSrc.replace(/\.png$/i, ".webp") : i
             </button>
         </div>
         <NavMenuPanel links={links}></NavMenuPanel>
-        <DisplaySettings client:only="svelte"></DisplaySettings>
+        <DisplaySettings
+            client:only="svelte"
+            sidebarLeft={sidebarLayoutConfig.components.left}
+            sidebarRight={sidebarLayoutConfig.components.right}
+        ></DisplaySettings>
     </div>
 </div>
 
@@ -309,3 +313,4 @@ window.loadPagefind = async function() {
     }
 };
 </script>}
+ 

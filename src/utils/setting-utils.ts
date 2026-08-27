@@ -166,3 +166,75 @@ export function setWallpaperMode(mode: WALLPAPER_MODE): void {
 		new CustomEvent("wallpaper-mode-change", { detail: { mode } }),
 	);
 }
+
+/* ========== 显示设置（运行时覆盖） ========== */
+
+const DISPLAY_SETTINGS_KEY = "mizuki:display-settings";
+/** 默认圆角（px），对应 variables.styl 中的 --radius-large: 1rem */
+export const DEFAULT_RADIUS = 16;
+
+export interface DisplaySettings {
+	/** 圆角大小（px） */
+	radius: number;
+	/** 隐藏的侧栏组件类型列表 */
+	hiddenWidgets: string[];
+}
+
+function readDisplaySettings(): DisplaySettings {
+	try {
+		const raw = localStorage.getItem(DISPLAY_SETTINGS_KEY);
+		if (!raw) {
+			return { radius: DEFAULT_RADIUS, hiddenWidgets: [] };
+		}
+		const parsed = JSON.parse(raw) as Partial<DisplaySettings>;
+		return {
+			radius:
+				typeof parsed.radius === "number" ? parsed.radius : DEFAULT_RADIUS,
+			hiddenWidgets: Array.isArray(parsed.hiddenWidgets)
+				? parsed.hiddenWidgets.filter((v) => typeof v === "string")
+				: [],
+		};
+	} catch {
+		return { radius: DEFAULT_RADIUS, hiddenWidgets: [] };
+	}
+}
+
+export function getDisplaySettings(): DisplaySettings {
+	return readDisplaySettings();
+}
+
+export function saveDisplaySettings(settings: DisplaySettings): void {
+	localStorage.setItem(DISPLAY_SETTINGS_KEY, JSON.stringify(settings));
+}
+
+/** 应用圆角到 :root 的 --radius-large（内联样式覆盖构建时默认值） */
+export function applyRadius(radius: number): void {
+	const root = document.querySelector(":root") as HTMLElement | null;
+	if (!root) {
+		return;
+	}
+	if (radius === DEFAULT_RADIUS) {
+		root.style.removeProperty("--radius-large");
+	} else {
+		root.style.setProperty("--radius-large", `${radius}px`);
+	}
+}
+
+/** 按隐藏列表设置侧栏组件 wrapper 的 data-hidden 属性 */
+export function applyWidgetVisibility(hiddenWidgets: string[]): void {
+	const hidden = new Set(hiddenWidgets);
+	document.querySelectorAll<HTMLElement>("[data-widget-type]").forEach((el) => {
+		if (hidden.has(el.dataset.widgetType as string)) {
+			el.setAttribute("data-hidden", "true");
+		} else {
+			el.removeAttribute("data-hidden");
+		}
+	});
+}
+
+/** 应用全部显示设置（初始加载与 swup 导航后调用） */
+export function applyDisplaySettings(): void {
+	const settings = readDisplaySettings();
+	applyRadius(settings.radius);
+	applyWidgetVisibility(settings.hiddenWidgets);
+}

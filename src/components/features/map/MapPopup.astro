@@ -1,22 +1,15 @@
 ---
+import Link from "@components/atoms/Link/Link.astro";
 import MapPopupItem from "./MapPopupItem.astro";
+import type { MapGroup } from "./types";
 
 interface Props {
-	group: {
-		lat: number;
-		lng: number;
-		items: Array<{
-			id: string;
-			title: string;
-			url: string;
-			lat: number;
-			lng: number;
-		}>;
-	};
+	group: MapGroup;
 	viewPostText: string;
+	postsAtLocationText: string;
 }
 
-const { group, viewPostText } = Astro.props;
+const { group, viewPostText, postsAtLocationText } = Astro.props;
 ---
 
 <div class="map-popup">
@@ -24,13 +17,15 @@ const { group, viewPostText } = Astro.props;
 		group.items.length === 1 ? (
 			<>
 				<div class="map-popup-title">{group.items[0].title}</div>
-				<a class="map-popup-link" href={group.items[0].url}>
-					{viewPostText || "View Post"}
-				</a>
+				<Link href={group.items[0].url} variant="primary" class="map-popup-link">
+					{viewPostText}
+				</Link>
 			</>
 		) : (
 			<>
-				<div class="map-popup-title">{group.items.length} posts at this location</div>
+				<div class="map-popup-title">
+					{group.items.length} {postsAtLocationText}
+				</div>
 				<div class="map-popup-list">
 					{group.items.map((post) => (
 						<MapPopupItem post={post} viewPostText={viewPostText} />

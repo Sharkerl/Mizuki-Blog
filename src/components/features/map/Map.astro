@@ -1,265 +1,301 @@
 ---
-import type { MapPost } from "./types";
+import Icon from "@components/atoms/Icon/Icon.astro";
+import MapPopup from "./MapPopup.astro";
+import MapZoomControls from "./MapZoomControls.astro";
+import type { MapGroup, MapPost } from "./types";
 
-const { posts = [], emptyText = "", viewPostText = "" } = Astro.props;
+interface Props {
+	posts: MapPost[];
+	emptyText: string;
+	viewPostText: string;
+	postsAtLocationText: string;
+	zoomInLabel: string;
+	zoomOutLabel: string;
+	resetViewLabel: string;
+}
 
-let initialCenter = [32.06, 118.78];
-let initialZoom = 5;
+const {
+	posts = [],
+	emptyText = "",
+	viewPostText = "",
+	postsAtLocationText = "",
+	zoomInLabel = "",
+	zoomOutLabel = "",
+	resetViewLabel = "",
+} = Astro.props;
+
+// 服务端按经纬度分组，弹窗内容服务端渲染到 <template> 中
+const groups: MapGroup[] = [];
+const groupMap = new Map<string, MapGroup>();
+for (const post of posts) {
+	const key = `${post.lat},${post.lng}`;
+	let group = groupMap.get(key);
+	if (!group) {
+		group = { lat: post.lat, lng: post.lng, items: [] };
+		groupMap.set(key, group);
+		groups.push(group);
+	}
+	group.items.push(post);
+}
+
+const markerData = groups.map((group, index) => ({
+	lat: group.lat,
+	lng: group.lng,
+	tpl: `map-popup-tpl-${index}`,
+}));
 ---
 
 <div class="map-page">
 	{
 		posts.length === 0 ? (
-			<div class="map-empty">
-				<iconify-icon
+			<div class="flex flex-col items-center justify-center gap-3 px-4 py-20 text-center">
+				<Icon
 					icon="material-symbols:map-outline"
-					width="64"
-					height="64"
-					class="map-empty-icon"
+					class="text-6xl text-black/15 dark:text-white/20"
 				/>
-				<p class="map-empty-text">{emptyText}</p>
+				<p class="text-lg text-black/45 dark:text-white/50">{emptyText}</p>
 			</div>
 		) : (
-			<div id="footprint-map" class="map-container" />
+			<>
+				<div id="footprint-map" class="map-container" />
+				<MapZoomControls
+					zoomInLabel={zoomInLabel}
+					zoomOutLabel={zoomOutLabel}
+					resetViewLabel={resetViewLabel}
+				/>
+				{groups.map((group, index) => (
+					<template id={`map-popup-tpl-${index}`}>
+						<MapPopup
+							group={group}
+							viewPostText={viewPostText}
+							postsAtLocationText={postsAtLocationText}
+						/>
+					</template>
+				))}
+			</>
 		)
 	}
+</div>
 
-	<link rel="stylesheet" href="/vendor/leaflet/leaflet.css" crossorigin="" />
-	<script is:inline src="/vendor/leaflet/leaflet.js" crossorigin=""></script>
-	<script define:vars={{ posts, viewPostText, initialCenter, initialZoom }}>
-		const waitForLeaflet = function () {
+<script is:inline define:vars={{ markerData }}>
+	(function () {
+		"use strict";
+
+		var CONTAINER_ID = "footprint-map";
+		var LEAFLET_CSS_URL = "/vendor/leaflet/leaflet.css";
+		var LEAFLET_JS_URL = "/vendor/leaflet/leaflet.js";
+		var LEAFLET_CSS_ID = "leaflet-css-loaded";
+		var LEAFLET_JS_ID = "leaflet-script-loaded";
+		var MAP_STORE_KEY = "__mizukiFootprintMap";
+		var LEAFLET_WAIT_TIMEOUT = 10000;
+
+		function loadStylesheet(url, id) {
 			return new Promise(function (resolve) {
-				function check() {
-					if (
-						typeof L !== "undefined" &&
-						document.getElementById("footprint-map")
-					) {
-						resolve(true);
-					} else {
-						requestAnimationFrame(check);
-					}
+				if (document.getElementById(id)) {
+					resolve();
+					return;
 				}
-				check();
+				var link = document.createElement("link");
+				link.id = id;
+				link.rel = "stylesheet";
+				link.href = url;
+				link.onload = function () {
+					resolve();
+				};
+				link.onerror = function () {
+					resolve();
+				};
+				document.head.appendChild(link);
 			});
-		};
+		}
 
-		(async function () {
-			await waitForLeaflet();
+		function loadScript(url, id) {
+			return new Promise(function (resolve, reject) {
+				if (document.getElementById(id)) {
+					resolve();
+					return;
+				}
+				var script = document.createElement("script");
+				script.id = id;
+				script.src = url;
+				script.onload = function () {
+					resolve();
+				};
+				script.onerror = function () {
+					reject(new Error("无法加载 " + url));
+				};
+				document.head.appendChild(script);
+			});
+		}
 
-			const mapEl = document.getElementById("footprint-map");
-			if (!mapEl) {
+		// 脚本标签已存在但尚未加载完成时，有界等待全局 L 就绪
+		function waitForLeaflet(timeout) {
+			return new Promise(function (resolve, reject) {
+				var start = Date.now();
+				(function check() {
+					if (typeof L !== "undefined") {
+						resolve();
+						return;
+					}
+					if (Date.now() - start > timeout) {
+						reject(new Error("Leaflet 加载超时"));
+						return;
+					}
+					requestAnimationFrame(check);
+				})();
+			});
+		}
+
+		function destroyMap() {
+			var map = window[MAP_STORE_KEY];
+			if (map) {
+				map.remove();
+				window[MAP_STORE_KEY] = null;
+			}
+		}
+
+		function cleanupWhenContainerRemoved() {
+			if (!document.getElementById(CONTAINER_ID)) {
+				destroyMap();
+			}
+		}
+
+		function registerCleanup() {
+			if (window.swup && window.swup.hooks) {
+				window.swup.hooks.on("content:replace", cleanupWhenContainerRemoved);
+			} else {
+				document.addEventListener(
+					"swup:enable",
+					function () {
+						if (window.swup && window.swup.hooks) {
+							window.swup.hooks.on(
+								"content:replace",
+								cleanupWhenContainerRemoved,
+							);
+						}
+					},
+					{ once: true },
+				);
+			}
+			window.addEventListener("beforeunload", destroyMap);
+		}
+
+		function initMap() {
+			var container = document.getElementById(CONTAINER_ID);
+			if (!container) {
 				return;
 			}
 
-			const map = L.map("footprint-map", {
+			destroyMap();
+
+			var map = L.map(container, {
 				scrollWheelZoom: false,
+				zoomControl: false,
 				attributionControl: false,
 			});
+			window[MAP_STORE_KEY] = map;
 
-			const initialCenterValue = initialCenter;
-			const initialZoomValue = initialZoom;
+			// 位置数据范围：中国 + 日本
+			map.setMaxBounds(
+				L.latLngBounds([
+					[16, 72],
+					[56, 152],
+				]),
+			);
 
-			map.setView(initialCenterValue, initialZoomValue);
-			map.invalidateSize();
-
-			const tileBounds = L.latLngBounds([
-				[15, 95],
-				[55, 150],
-			]);
-			map.setMaxBounds(tileBounds);
-
+			// 本地离线瓦片：z4-6 广域覆盖，z7-9 为东部中国细节瓦片
 			L.tileLayer("/tiles/{z}/{x}/{y}.png", {
 				minZoom: 4,
-				maxZoom: 6,
+				maxZoom: 9,
+				noWrap: true,
+				bounds: L.latLngBounds([
+					[15, 70],
+					[56, 170],
+				]),
 			}).addTo(map);
 
-			const markers = L.layerGroup().addTo(map);
+			// 点击地图后启用滚轮缩放，鼠标移出后禁用，避免滚动页面时被地图卡住
+			container.addEventListener("click", function () {
+				map.scrollWheelZoom.enable();
+			});
+			container.addEventListener("mouseleave", function () {
+				map.scrollWheelZoom.disable();
+			});
 
-			const dotIcon = L.divIcon({
+			var dotIcon = L.divIcon({
 				className: "map-marker-root",
-				html:
-					'<div style="position:relative;width:16px;height:16px;">' +
-					'<div style="position:absolute;inset:0;border-radius:50%;background:var(--primary);border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.35);"></div>' +
-					"</div>",
-				iconSize: [16, 16],
-				iconAnchor: [8, 8],
-				popupAnchor: [0, -12],
+				html: "",
+				iconSize: [14, 14],
+				iconAnchor: [7, 7],
+				popupAnchor: [0, -10],
 			});
 
-			const grouped = new Map();
-			posts.forEach(function (post) {
-				const key = post.lat + "," + post.lng;
-				if (!grouped.has(key)) {
-					grouped.set(key, {
-						lat: post.lat,
-						lng: post.lng,
-						items: [],
-					});
+			var latlngs = [];
+			markerData.forEach(function (marker) {
+				latlngs.push([marker.lat, marker.lng]);
+				var template = document.getElementById(marker.tpl);
+				var popupNode = template
+					? template.content.firstElementChild
+					: null;
+				if (!popupNode) {
+					return;
 				}
-				const current = grouped.get(key);
-				current.items.push(post);
+				L.marker([marker.lat, marker.lng], { icon: dotIcon })
+					.bindPopup(popupNode, { maxWidth: 280, className: "map-popup" })
+					.addTo(map);
 			});
 
-			grouped.forEach(function (group) {
-				const marker = L.marker([group.lat, group.lng], {
-					icon: dotIcon,
+			function fitView() {
+				map.fitBounds(L.latLngBounds(latlngs), {
+					padding: [48, 48],
+					maxZoom: 6,
 				});
-				const popupContent = document.createElement("div");
-				popupContent.className = "map-popup";
-
-				if (group.items.length === 1) {
-					const post = group.items[0];
-
-					const title = document.createElement("div");
-					title.className = "map-popup-title";
-					title.textContent = post.title;
-
-					const link = document.createElement("a");
-					link.href = post.url;
-					link.className = "map-popup-link";
-					link.textContent = viewPostText || "View Post";
-
-					popupContent.appendChild(title);
-					popupContent.appendChild(link);
-				} else {
-					const heading = document.createElement("div");
-					heading.className = "map-popup-title";
-					heading.textContent =
-						group.items.length + " posts at this location";
-					popupContent.appendChild(heading);
-
-					const list = document.createElement("div");
-					list.style.marginTop = "0.4rem";
-					list.style.display = "flex";
-					list.style.flexDirection = "column";
-					list.style.gap = "0.35rem";
-
-					group.items.forEach(function (post) {
-						const item = document.createElement("div");
-						item.style.display = "flex";
-						item.style.alignItems = "center";
-						item.style.justifyContent = "space-between";
-						item.style.gap = "0.5rem";
-
-						const title = document.createElement("span");
-						title.textContent = post.title;
-						title.style.overflow = "hidden";
-						title.style.textOverflow = "ellipsis";
-						title.style.whiteSpace = "nowrap";
-
-						const link = document.createElement("a");
-						link.href = post.url;
-						link.className = "map-popup-link";
-						link.textContent = viewPostText || "View Post";
-						link.style.flexShrink = "0";
-
-						item.appendChild(title);
-						item.appendChild(link);
-						list.appendChild(item);
-					});
-
-					popupContent.appendChild(list);
-				}
-
-				marker.bindPopup(popupContent, {
-					maxWidth: 280,
-					className: "map-popup",
-				});
-				markers.addLayer(marker);
-			});
-
-			const latlngs = posts.map(function (post) {
-				return [post.lat, post.lng];
-			});
-			if (latlngs.length > 0) {
-				const bounds = L.latLngBounds(latlngs);
-				map.fitBounds(bounds, { padding: [48, 48], maxZoom: 5 });
+				map.invalidateSize();
 			}
 
-			function bindZoomButtons() {
-				const zoomInBtn = document.querySelector(
-					'.map-zoom-btn[data-action="zoom-in"]',
-				);
-				const zoomOutBtn = document.querySelector(
-					'.map-zoom-btn[data-action="zoom-out"]',
-				);
-				const resetBtn = document.querySelector(
-					'.map-zoom-btn[data-action="reset"]',
-				);
+			fitView();
 
-				zoomInBtn?.addEventListener("click", function () {
-					map.zoomIn();
-				});
-				zoomOutBtn?.addEventListener("click", function () {
-					map.zoomOut();
-				});
-				resetBtn?.addEventListener("click", function () {
-					map.setView(initialCenterValue, initialZoomValue);
-					map.invalidateSize();
+			// 缩放按钮：事件委托，单监听器避免重复绑定
+			var page = container.closest(".map-page");
+			var controls = page ? page.querySelector(".map-zoom") : null;
+			if (controls) {
+				controls.addEventListener("click", function (event) {
+					var target = event.target instanceof Element ? event.target : null;
+					var btn = target ? target.closest("[data-action]") : null;
+					if (!btn) {
+						return;
+					}
+					var action = btn.getAttribute("data-action");
+					if (action === "zoom-in") {
+						map.zoomIn();
+					} else if (action === "zoom-out") {
+						map.zoomOut();
+					} else if (action === "reset") {
+						fitView();
+					}
 				});
 			}
 
-			if (document.readyState === "loading") {
-				document.addEventListener("DOMContentLoaded", bindZoomButtons);
-			} else {
-				bindZoomButtons();
-			}
-		})();
-	</script>
+			registerCleanup();
+		}
 
-	<div class="map-zoom">
-		<button
-			class="map-zoom-btn btn-regular rounded-lg h-10 w-10 active:scale-90"
-			data-action="zoom-in"
-			aria-label="Zoom in"
-			title="Zoom in">+</button
-		>
-		<button
-			class="map-zoom-btn btn-regular rounded-lg h-10 w-10 active:scale-90"
-			data-action="zoom-out"
-			aria-label="Zoom out"
-			title="Zoom out">-</button
-		>
-		<button
-			class="map-zoom-btn btn-regular rounded-lg h-10 w-10 active:scale-90"
-			data-action="reset"
-			aria-label="Reset view"
-			title="Reset view">⤾</button
-		>
-	</div>
-</div>
+		loadStylesheet(LEAFLET_CSS_URL, LEAFLET_CSS_ID)
+			.then(function () {
+				return loadScript(LEAFLET_JS_URL, LEAFLET_JS_ID);
+			})
+			.then(function () {
+				return waitForLeaflet(LEAFLET_WAIT_TIMEOUT);
+			})
+			.then(initMap)
+			.catch(function (error) {
+				console.error("[FootprintMap] 初始化失败:", error);
+			});
+	})();
+</script>
 
 <style>
 	.map-page {
 		position: relative;
-	}
-
-	.map-empty {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		text-align: center;
-		gap: 0.75rem;
-		padding: 5rem 1rem;
-	}
-
-	.map-empty-icon {
-		color: rgb(0 0 0 / 0.15);
-	}
-
-	:global(.dark) .map-empty-icon {
-		color: rgb(255 255 255 / 0.18);
-	}
-
-	.map-empty-text {
-		font-size: 1.125rem;
-		line-height: 1.5;
-		color: rgb(0 0 0 / 0.45);
-	}
-
-	:global(.dark) .map-empty-text {
-		color: rgb(255 255 255 / 0.5);
 	}
 
 	.map-container {
@@ -269,109 +305,5 @@ let initialZoom = 5;
 		overflow: hidden;
 		padding: 8px;
 		background: color-mix(in oklch, var(--card-bg) 92%, transparent);
-	}
-
-	.map-container .leaflet-container {
-		border-radius: calc(var(--radius-large, 1rem) - 8px);
-		background: var(--card-bg);
-	}
-
-	:global(.dark) .map-container .leaflet-tile {
-		filter: brightness(0.85) contrast(1.05);
-	}
-
-	:global(.dark) .map-container .leaflet-container {
-		background: #0f172a;
-	}
-
-	.map-popup-title {
-		font-weight: 600;
-		margin-bottom: 0.35rem;
-		color: var(--popup-content);
-		font-family: var(--font-sans, system-ui, sans-serif);
-	}
-
-	.map-popup-link {
-		color: var(--popup-link-light);
-		text-decoration: none;
-		font-family: var(--font-sans, system-ui, sans-serif);
-	}
-
-	:global(.dark) .map-popup-link {
-		color: var(--popup-link-dark);
-	}
-
-	.map-popup-link:hover {
-		text-decoration: underline;
-	}
-
-	.leaflet-popup.map-popup .leaflet-popup-content-wrapper {
-		border-radius: var(--radius-large, 1rem);
-		background: var(--card-bg);
-		color: var(--popup-content);
-		font-family: var(--font-sans, system-ui, sans-serif);
-		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-	}
-
-	:global(.dark) .leaflet-popup.map-popup .leaflet-popup-content-wrapper {
-		color: var(--popup-content);
-		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-	}
-
-	.leaflet-popup.map-popup .leaflet-popup-content {
-		margin: 12px 16px;
-		line-height: 1.5;
-		font-family: inherit;
-	}
-	.leaflet-popup.map-popup .leaflet-popup-tip {
-		background: var(--card-bg);
-		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-	}
-
-	:global(.dark) .leaflet-popup.map-popup .leaflet-popup-tip {
-		background: var(--card-bg);
-	}
-
-	.leaflet-popup.map-popup .leaflet-popup-close-button {
-		color: var(--btn-content);
-	}
-	:global(.leaflet-control-zoom) {
-		display: none;
-	}
-
-	.map-zoom {
-		position: absolute;
-		top: 16px;
-		right: 16px;
-		display: flex;
-		gap: 6px;
-		z-index: 1000;
-		user-select: none;
-	}
-
-	.map-marker-root {
-		position: relative !important;
-		background: transparent !important;
-		border: none !important;
-		padding: 0 !important;
-		margin: 0 !important;
-		width: 16px !important;
-		height: 16px !important;
-		overflow: visible !important;
-	}
-
-	.map-marker-root::before {
-		content: "";
-		position: absolute;
-		inset: 0;
-		border-radius: 50%;
-		background: var(--primary);
-		border: 2px solid white;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
-		pointer-events: none;
-	}
-
-	:global(.dark) .map-marker-root::before {
-		border-color: rgba(255, 255, 255, 0.9);
 	}
 </style>

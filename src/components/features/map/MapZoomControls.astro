@@ -1,37 +1,53 @@
 ---
+import Icon from "@components/atoms/Icon/Icon.astro";
+
 interface Props {
-	onZoomIn: () => void;
-	onZoomOut: () => void;
-	onReset: () => void;
+	zoomInLabel: string;
+	zoomOutLabel: string;
+	resetViewLabel: string;
 }
 
-const { onZoomIn, onZoomOut, onReset } = Astro.props;
+const { zoomInLabel, zoomOutLabel, resetViewLabel } = Astro.props;
 ---
 
 <div class="map-zoom">
 	<button
-		class="map-zoom-btn btn-regular rounded-lg h-10 w-10 active:scale-90"
+		type="button"
+		class="map-zoom-btn btn-card flex h-11 w-11 items-center justify-center rounded-lg text-[var(--primary)] active:scale-90"
 		data-action="zoom-in"
-		aria-label="Zoom in"
-		title="Zoom in"
-		on:click={onZoomIn}
-	>+
-</button>
-	<button
-		class="map-zoom-btn btn-regular rounded-lg h-10 w-10 active:scale-90"
-		data-action="zoom-out"
-		aria-label="Zoom out"
-		title="Zoom out"
-		on:click={onZoomOut}
-	>-
-</button>
-	<button
-		class="map-zoom-btn btn-regular rounded-lg h-10 w-10 active:scale-90"
-		data-action="reset"
-		aria-label="Reset view"
-		title="Reset view"
-		on:click={onReset}
-	>⌂
+		aria-label={zoomInLabel}
+		title={zoomInLabel}
+	>
+		<Icon icon="material-symbols:zoom-in" class="text-xl" />
 	</button>
+	<button
+		type="button"
+		class="map-zoom-btn btn-card flex h-11 w-11 items-center justify-center rounded-lg text-[var(--primary)] active:scale-90"
+		data-action="zoom-out"
+		aria-label={zoomOutLabel}
+		title={zoomOutLabel}
+	>
+		<Icon icon="material-symbols:zoom-out" class="text-xl" />
+	</button>
+	<button
+		type="button"
+		class="map-zoom-btn btn-card flex h-11 w-11 items-center justify-center rounded-lg text-[var(--primary)] active:scale-90"
+		data-action="reset"
+		aria-label={resetViewLabel}
+		title={resetViewLabel}
+	>
+		<Icon icon="material-symbols:filter-center-focus" class="text-xl" />
 	</button>
 </div>
+
+<style>
+	.map-zoom {
+		position: absolute;
+		top: 16px;
+		right: 16px;
+		display: flex;
+		gap: 6px;
+		z-index: 1000;
+		user-select: none;
+	}
+</style>

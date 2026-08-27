@@ -1,12 +1,9 @@
 ---
+import Link from "@components/atoms/Link/Link.astro";
+import type { MapPost } from "./types";
+
 interface Props {
-	post: {
-		id: string;
-		title: string;
-		url: string;
-		lat: number;
-		lng: number;
-	};
+	post: MapPost;
 	viewPostText: string;
 }
 
@@ -15,7 +12,7 @@ const { post, viewPostText } = Astro.props;
 
 <div class="map-popup-row">
 	<span class="map-popup-title">{post.title}</span>
-	<a class="map-popup-link" href={post.url}>
-		{viewPostText || "View Post"}
-	</a>
+	<Link href={post.url} variant="primary" class="map-popup-link">
+		{viewPostText}
+	</Link>
 </div>

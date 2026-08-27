@@ -100,16 +100,20 @@ function renderComponent(
 		{
 			showMobile && mobileTopComponents.length > 0 && (
 				<div class="flex flex-col w-full gap-4 md:hidden">
-					{mobileTopComponents.map((component, index) => {
-						const renderData = renderComponent(component, index);
-						if (!renderData) {
-							return null;
-						}
+				{mobileTopComponents.map((component, index) => {
+					const renderData = renderComponent(component, index);
+					if (!renderData) {
+						return null;
+					}
 
-						const { Component, props } = renderData;
-						return <Component {...props} />;
-					})}
-				</div>
+					const { Component, props } = renderData;
+					return (
+						<div class="widget-display-wrapper" data-widget-type={component.type}>
+							<Component {...props} />
+						</div>
+					);
+				})}
+			</div>
 			)
 		}
 
@@ -117,14 +121,18 @@ function renderComponent(
 			showTablet && tabletTopComponents.length > 0 && (
 				<div class="sidebar-content hidden md:flex lg:hidden flex-col w-full gap-4">
 					{tabletTopComponents.map((component, index) => {
-						const renderData = renderComponent(component, index);
-						if (!renderData) {
-							return null;
-						}
+					const renderData = renderComponent(component, index);
+					if (!renderData) {
+						return null;
+					}
 
-						const { Component, props } = renderData;
-						return <Component {...props} />;
-					})}
+					const { Component, props } = renderData;
+					return (
+						<div class="widget-display-wrapper" data-widget-type={component.type}>
+							<Component {...props} />
+						</div>
+					);
+				})}
 				</div>
 			)
 		}
@@ -133,14 +141,18 @@ function renderComponent(
 			showDesktop && desktopTopComponents.length > 0 && (
 				<div class="sidebar-content hidden lg:flex flex-col w-full gap-4">
 					{desktopTopComponents.map((component, index) => {
-						const renderData = renderComponent(component, index);
-						if (!renderData) {
-							return null;
-						}
+					const renderData = renderComponent(component, index);
+					if (!renderData) {
+						return null;
+					}
 
-						const { Component, props } = renderData;
-						return <Component {...props} />;
-					})}
+					const { Component, props } = renderData;
+					return (
+						<div class="widget-display-wrapper" data-widget-type={component.type}>
+							<Component {...props} />
+						</div>
+					);
+				})}
 				</div>
 			)
 		}
@@ -156,16 +168,20 @@ function renderComponent(
 		{
 			showMobile && mobileStickyComponents.length > 0 && (
 				<div class="flex flex-col w-full gap-4 md:hidden">
-					{mobileStickyComponents.map((component, index) => {
-						const renderData = renderComponent(component, index);
-						if (!renderData) {
-							return null;
-						}
+				{mobileStickyComponents.map((component, index) => {
+					const renderData = renderComponent(component, index);
+					if (!renderData) {
+						return null;
+					}
 
-						const { Component, props } = renderData;
-						return <Component {...props} />;
-					})}
-				</div>
+					const { Component, props } = renderData;
+					return (
+						<div class="widget-display-wrapper" data-widget-type={component.type}>
+							<Component {...props} />
+						</div>
+					);
+				})}
+			</div>
 			)
 		}
 
@@ -173,14 +189,18 @@ function renderComponent(
 			showTablet && tabletStickyComponents.length > 0 && (
 				<div class="sidebar-content hidden md:flex lg:hidden flex-col w-full gap-4">
 					{tabletStickyComponents.map((component, index) => {
-						const renderData = renderComponent(component, index);
-						if (!renderData) {
-							return null;
-						}
+					const renderData = renderComponent(component, index);
+					if (!renderData) {
+						return null;
+					}
 
-						const { Component, props } = renderData;
-						return <Component {...props} />;
-					})}
+					const { Component, props } = renderData;
+					return (
+						<div class="widget-display-wrapper" data-widget-type={component.type}>
+							<Component {...props} />
+						</div>
+					);
+				})}
 				</div>
 			)
 		}
@@ -189,16 +209,32 @@ function renderComponent(
 			showDesktop && desktopStickyComponents.length > 0 && (
 				<div class="sidebar-content hidden lg:flex flex-col w-full gap-4">
 					{desktopStickyComponents.map((component, index) => {
-						const renderData = renderComponent(component, index);
-						if (!renderData) {
-							return null;
-						}
+					const renderData = renderComponent(component, index);
+					if (!renderData) {
+						return null;
+					}
 
-						const { Component, props } = renderData;
-						return <Component {...props} />;
-					})}
+					const { Component, props } = renderData;
+					return (
+						<div class="widget-display-wrapper" data-widget-type={component.type}>
+							<Component {...props} />
+						</div>
+					);
+				})}
 				</div>
 			)
 		}
 	</div>
 </div>
+
+<style>
+	/* display: contents 使 wrapper 不影响侧栏 flex 布局；
+	 * data-hidden 由运行时设置（setting-utils.applyWidgetVisibility）控制 */
+	.widget-display-wrapper {
+		display: contents;
+	}
+
+	.widget-display-wrapper[data-hidden="true"] {
+		display: none;
+	}
+</style>

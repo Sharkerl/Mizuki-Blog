@@ -13,8 +13,26 @@ enum I18nKey {
 
 	footprint = "footprint",
 	footprintSubtitle = "footprintSubtitle",
-	footprintEmpty = "footprintEmpty ",
+	footprintEmpty = "footprintEmpty",
 	footprintViewPost = "footprintViewPost",
+	footprintPostsAtLocation = "footprintPostsAtLocation",
+	footprintZoomIn = "footprintZoomIn",
+	footprintZoomOut = "footprintZoomOut",
+	footprintResetView = "footprintResetView",
+
+	// 设置面板
+	settingsRadius = "settingsRadius",
+	settingsSidebarWidgets = "settingsSidebarWidgets",
+	settingsLeftSidebar = "settingsLeftSidebar",
+	settingsRightSidebar = "settingsRightSidebar",
+	widgetProfile = "widgetProfile",
+	widgetAnnouncement = "widgetAnnouncement",
+	widgetTags = "widgetTags",
+	widgetCardToc = "widgetCardToc",
+	widgetSiteStats = "widgetSiteStats",
+	widgetCalendar = "widgetCalendar",
+	widgetCategories = "widgetCategories",
+	widgetMusic = "widgetMusic",
 
 	tags = "tags",
 	categories = "categories",

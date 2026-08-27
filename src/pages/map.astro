@@ -1,9 +1,12 @@
 ---
+import "../styles/map.css";
+
+import { Map } from "@components/features/map";
+import { PageHeader } from "@components/features/page-header";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { siteConfig } from "../config";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
-import { Map } from "@components/features/map";
 import { getSortedPostsList, parseLocation } from "@utils/content-utils";
 
 if (!siteConfig.featurePages.footprint) {
@@ -24,17 +27,7 @@ const posts = allPosts
 			lng: location.lng,
 		};
 	})
-	.filter(
-		(
-			post,
-		): post is {
-			id: string;
-			title: string;
-			url: string;
-			lat: number;
-			lng: number;
-		} => post !== null,
-	);
+	.filter((post): post is NonNullable<typeof post> => post !== null);
 
 const title = i18n(I18nKey.footprint);
 const subtitle = i18n(I18nKey.footprintSubtitle);
@@ -49,10 +42,16 @@ const subtitle = i18n(I18nKey.footprintSubtitle);
 		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative"
 	>
 		<div class="card-base z-10 p-6 sm:p-9 relative w-full">
+			<PageHeader title={title} subtitle={subtitle} />
+
 			<Map
 				posts={posts}
 				emptyText={i18n(I18nKey.footprintEmpty)}
 				viewPostText={i18n(I18nKey.footprintViewPost)}
+				postsAtLocationText={i18n(I18nKey.footprintPostsAtLocation)}
+				zoomInLabel={i18n(I18nKey.footprintZoomIn)}
+				zoomOutLabel={i18n(I18nKey.footprintZoomOut)}
+				resetViewLabel={i18n(I18nKey.footprintResetView)}
 			/>
 		</div>
 	</div>
