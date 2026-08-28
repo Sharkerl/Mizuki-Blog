@@ -25,6 +25,7 @@ export const ja: Translation = {
 
 	// 設定パネル
 	[Key.settingsRadius]: "角丸サイズ",
+	[Key.settingsSaturation]: "彩度",
 	[Key.settingsSidebarWidgets]: "サイドバーウィジェット",
 	[Key.settingsLeftSidebar]: "左サイドバー",
 	[Key.settingsRightSidebar]: "右サイドバー",
@@ -210,6 +211,14 @@ export const ja: Translation = {
 	[Key.scheduleSubtitle]: "楽しみなことと大切な予定",
 	[Key.scheduleYearUnit]: "年",
 	[Key.scheduleMonthUnit]: "月",
+
+	// 本棚ページ
+	[Key.bookshelf]: "本棚",
+	[Key.bookshelfSubtitle]: "私の本棚と読書リスト",
+	[Key.bookshelfRead]: "読む",
+	[Key.bookshelfEmpty]: "本棚は空です",
+	[Key.bookshelfEmptyDesc]:
+		"src/data/bookshelf.ts に書籍を追加し、PDF ファイルを public/files/books/ に置いてください",
 
 	// RSSページ
 	[Key.rss]: "RSSフィード",

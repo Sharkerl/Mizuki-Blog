@@ -5,6 +5,7 @@
  * 用于"单词本"页面，展示单词、中文翻译和词性。
  * 排序/搜索交互依赖 data-word / data-translation 属性，
  * 由 public/js/vocabulary-page-handler.js 处理。
+ * 悬停效果与技能卡片同款（阴影加深 + 上浮 + 主题色渐变覆盖层）。
  */
 import type { Word } from "@/data/wordlist";
 
@@ -16,12 +17,12 @@ const { word } = Astro.props;
 ---
 
 <div
-	class="word-card rounded-lg px-4 py-3 flex flex-col gap-1"
+	class="word-card group relative rounded-xl px-4 py-3 flex flex-col gap-1 bg-transparent border border-black/10 dark:border-white/10 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
 	data-word={word.word}
 	data-translation={word.translation}
 >
 	<div class="flex items-baseline justify-between gap-2">
-		<span class="text-lg font-semibold break-all text-black/80 dark:text-white/80">
+		<span class="text-lg font-semibold break-all text-black/80 dark:text-white/80 group-hover:text-[var(--primary)] transition-colors duration-200">
 			{word.word}
 		</span>
 		<span
@@ -33,17 +34,13 @@ const { word } = Astro.props;
 	<p class="text-sm text-black/60 dark:text-white/60">
 		{word.translation}
 	</p>
+
+	<!-- 悬停主题色渐变覆盖层（技能卡片同款） -->
+	<div class="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+	</div>
 </div>
 
 <style>
-	.word-card {
-		border: 1.5px solid var(--line-divider);
-		background: transparent;
-		transition: border-color 200ms;
-	}
-	.word-card:hover {
-		border-color: var(--primary);
-	}
 	.pos-badge {
 		border: 1px solid var(--line-divider);
 		color: var(--primary);

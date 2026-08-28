@@ -32,6 +32,39 @@ export function setHue(hue: number): void {
 	r.style.setProperty("--hue", String(hue));
 }
 
+/** 获取默认饱和度（config-carrier 的 data-saturation，缺省 1） */
+export function getDefaultSaturation(): number {
+	const configCarrier = document.getElementById("config-carrier");
+	if (!configCarrier) {
+		return 1;
+	}
+	const value = Number.parseFloat(configCarrier.dataset.saturation || "1");
+	return Number.isFinite(value) ? Math.min(Math.max(value, 0), 1) : 1;
+}
+
+/** 获取当前饱和度（localStorage 优先，回退配置默认值） */
+export function getSaturation(): number {
+	const stored = localStorage.getItem("saturation");
+	if (stored !== null) {
+		const value = Number.parseFloat(stored);
+		if (Number.isFinite(value)) {
+			return Math.min(Math.max(value, 0), 1);
+		}
+	}
+	return getDefaultSaturation();
+}
+
+/** 设置饱和度并实时应用到 :root 的 --sat 变量 */
+export function setSaturation(saturation: number): void {
+	const value = Math.min(Math.max(saturation, 0), 1);
+	localStorage.setItem("saturation", String(value));
+	const r = document.querySelector(":root") as HTMLElement;
+	if (!r) {
+		return;
+	}
+	r.style.setProperty("--sat", String(value));
+}
+
 export function applyThemeToDocument(theme: LIGHT_DARK_MODE) {
 	// 获取当前主题状态的完整信息
 	const currentIsDark = document.documentElement.classList.contains("dark");

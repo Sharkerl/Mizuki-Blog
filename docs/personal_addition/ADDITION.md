@@ -56,28 +56,46 @@ export const MapConfig = {
 ## 2. 运行时设置面板扩展（右上角调色板按钮）
 
 ### 功能
-在原有"主题色"设置面板中新增两组客户端配置，localStorage 持久化（key：`mizuki:display-settings`），刷新保留：
+在原有"主题色"设置面板中新增三组客户端配置，localStorage 持久化（圆角/侧栏 key：`mizuki:display-settings`；饱和度 key：`saturation`），刷新保留：
 
-1. **圆角大小**：滑块 0-24px，实时修改 `:root` 的 `--radius-large`，全站卡片圆角即时变化
-2. **侧栏组件显隐**：左/右侧栏每个组件的开关，实时显示/隐藏
+1. **饱和度**：滑块 0-100%，实时修改 `:root` 的 `--sat`（oklch 色度缩放系数），全站主题色鲜艳程度即时变化。觉得默认太鲜艳可调低（如 60%）
+2. **圆角大小**：滑块 0-24px，实时修改 `:root` 的 `--radius-large`，全站卡片圆角即时变化
+3. **侧栏组件显隐**：左/右侧栏每个组件的开关，实时显示/隐藏
 
 ### 涉及文件
 
 | 文件 | 说明 |
 |------|------|
-| `src/components/features/settings/DisplaySettings.svelte` | 面板本体（主题色 + 圆角 + 侧栏组件三组） |
+| `src/components/features/settings/DisplaySettings.svelte` | 面板本体（主题色 + 饱和度 + 圆角 + 侧栏组件四组） |
 | `src/components/features/settings/types.ts` | Props 类型（sidebarLeft / sidebarRight） |
-| `src/utils/setting-utils.ts` | 新增 `DisplaySettings` 读写与 `applyRadius` / `applyWidgetVisibility` / `applyDisplaySettings` |
+| `src/utils/setting-utils.ts` | `DisplaySettings` 读写、`applyRadius` / `applyWidgetVisibility` / `applyDisplaySettings`、饱和度三函数（`getDefaultSaturation` / `getSaturation` / `setSaturation`） |
+| `src/styles/variables.styl` | 核心：新增 Stylus 工具函数 `sat(c)`（生成 `calc(c * var(--sat, 1))`），所有高色度颜色（--primary / --btn-content / --title-active / 链接色 / admonitions / --toc-item-active 等 22 处）的色度改用 `sat()` 缩放 |
+| `src/layouts/partials/HeadTags.astro` | 页面渲染前初始化脚本：从 localStorage 读 `saturation`（回退 `configSaturation`）设置 `--sat`，与 `--hue` 同机制 |
+| `src/layouts/Layout.astro` | 计算 `configSaturation` 传给 HeadTags |
+| `src/components/misc/ConfigCarrier.astro` | `data-saturation` 属性（运行时读取配置默认值用） |
 | `src/components/layout/SidebarColumn.astro` | 每个侧栏组件包一层 `widget-display-wrapper`（`display: contents`，不影响布局），带 `data-widget-type` 供显隐控制 |
 | `src/components/organisms/navigation/Navbar.astro` | 传入 `sidebarLayoutConfig.components.left/right` 组件列表 |
+
+### 可配置项（`src/config.ts`）
+
+```ts
+themeColor: {
+	hue: 240,
+	fixed: false,
+	saturation: 1, // 主题色饱和度 0-1（色度缩放系数），觉得默认太鲜艳可调低（如 0.6）
+},
+```
 
 ### 实现要点
 
 - wrapper 用 `display: contents`，不改变侧栏 flex 布局；`data-hidden="true"` 时 `display: none`
 - swup 导航替换侧栏 DOM 后自动重新应用（监听 `content:replace`）
 - 圆角恢复默认值（16px）时移除内联覆盖，回归构建时 CSS
+- **饱和度实现机制**：与 `--hue` 完全同构——CSS 变量参与 oklch 计算（`oklch(0.70 calc(0.14 * var(--sat, 1)) var(--hue))`），JS 只改一个变量全站即时生效，无需重编译
+- **低色度颜色不缩放**：背景类变量（--page-bg / --card-bg / --btn-regular-bg 等，色度 ≤0.05）保持原值不参与缩放，避免调饱和度时页面底色异变
+- **维护提醒**：新增主题色相关样式时，若 oklch 色度 ≥0.07 应使用 `sat()` 缩放（variables.styl 中）或 `calc(c * var(--sat, 1))`（普通 CSS/Tailwind 任意值中，如 `bg-[oklch(0.75_calc(0.14*var(--sat,1))_var(--hue))]`），否则该颜色不随饱和度变化。已有先例：main.css（btn-regular-dark.success）、Banner.astro / MainGridLayout.astro（credit 图标）、encrypted-content.css
 - 已知边界：圆角只影响使用 `var(--radius-large)` 的元素，个别硬编码 `rounded-2xl` 的元素不随动
-- **i18n 键**：`settingsRadius` / `settingsSidebarWidgets` / `settingsLeftSidebar` / `settingsRightSidebar` / `widgetProfile` / `widgetAnnouncement` / `widgetTags` / `widgetCardToc` / `widgetSiteStats` / `widgetCalendar` / `widgetCategories` / `widgetMusic`
+- **i18n 键**：`settingsRadius` / `settingsSaturation` / `settingsSidebarWidgets` / `settingsLeftSidebar` / `settingsRightSidebar` / `widgetProfile` / `widgetAnnouncement` / `widgetTags` / `widgetCardToc` / `widgetSiteStats` / `widgetCalendar` / `widgetCategories` / `widgetMusic`
 
 ---
 

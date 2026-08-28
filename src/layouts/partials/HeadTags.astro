@@ -28,6 +28,7 @@ interface Props {
 
 	// 配置
 	configHue: number;
+	configSaturation: number;
 }
 
 const {
@@ -36,6 +37,7 @@ const {
 	ogImageUrl,
 	setOGTypeArticle = false,
 	configHue,
+	configSaturation = 1,
 } = Astro.props;
 
 // 关键词
@@ -107,6 +109,7 @@ const favicons: Favicon[] =
 		DARK_MODE,
 		BANNER_HEIGHT_EXTEND: 30,
 		configHue,
+		configSaturation,
 		pageScaling: siteConfig.pageScaling,
 	}}
 >
@@ -135,6 +138,10 @@ const favicons: Favicon[] =
 	// Load the hue from local storage
 	const hue = localStorage.getItem("hue") || configHue;
 	document.documentElement.style.setProperty("--hue", hue);
+
+	// Load the saturation from local storage（主题色饱和度 0-1）
+	const sat = localStorage.getItem("saturation") || String(configSaturation);
+	document.documentElement.style.setProperty("--sat", sat);
 
 	// calculate the --banner-height-extend, which needs to be a multiple of 4 to avoid blurry text
 	let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));

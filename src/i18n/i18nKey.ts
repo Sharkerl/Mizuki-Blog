@@ -21,7 +21,9 @@ enum I18nKey {
 	footprintResetView = "footprintResetView",
 
 	// 设置面板
+	// 运行时设置面板
 	settingsRadius = "settingsRadius",
+	settingsSaturation = "settingsSaturation",
 	settingsSidebarWidgets = "settingsSidebarWidgets",
 	settingsLeftSidebar = "settingsLeftSidebar",
 	settingsRightSidebar = "settingsRightSidebar",
@@ -200,6 +202,13 @@ enum I18nKey {
 	scheduleSubtitle = "scheduleSubtitle",
 	scheduleYearUnit = "scheduleYearUnit",
 	scheduleMonthUnit = "scheduleMonthUnit",
+
+	// 书架页面
+	bookshelf = "bookshelf",
+	bookshelfSubtitle = "bookshelfSubtitle",
+	bookshelfRead = "bookshelfRead",
+	bookshelfEmpty = "bookshelfEmpty",
+	bookshelfEmptyDesc = "bookshelfEmptyDesc",
 
 	// Skills page
 	skills = "skills",

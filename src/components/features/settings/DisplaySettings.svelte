@@ -8,10 +8,13 @@
 		applyWidgetVisibility,
 		DEFAULT_RADIUS,
 		getDefaultHue,
+		getDefaultSaturation,
 		getDisplaySettings,
 		getHue,
+		getSaturation,
 		saveDisplaySettings,
 		setHue,
+		setSaturation,
 	} from "@utils/setting-utils";
 	import { onMount } from "svelte";
 
@@ -36,14 +39,20 @@
 	};
 
 	let hue = 250;
-	let defaultHue = 250;
-	let radius = DEFAULT_RADIUS;
-	let hiddenWidgets: string[] = [];
-	let isMounted = false;
+let defaultHue = 250;
+let saturation = 1;
+let defaultSaturation = 1;
+let radius = DEFAULT_RADIUS;
+let hiddenWidgets: string[] = [];
+let isMounted = false;
 
-	function resetHue() {
-		hue = defaultHue;
-	}
+function resetHue() {
+	hue = defaultHue;
+}
+
+function resetSaturation() {
+	saturation = defaultSaturation;
+}
 
 	function resetRadius() {
 		radius = DEFAULT_RADIUS;
@@ -69,6 +78,8 @@
 		isMounted = true;
 		defaultHue = getDefaultHue();
 		hue = getHue();
+		defaultSaturation = getDefaultSaturation();
+		saturation = getSaturation();
 
 		const settings = getDisplaySettings();
 		radius = settings.radius;
@@ -94,6 +105,10 @@
 
 	$: if (isMounted && (hue || hue === 0)) {
 		setHue(hue);
+	}
+
+	$: if (isMounted) {
+		setSaturation(saturation);
 	}
 
 	$: if (isMounted) {
@@ -156,6 +171,53 @@
 			class="slider"
 			id="colorSlider"
 			step="5"
+			style="width: 100%"
+		/>
+	</div>
+
+	<!-- 饱和度 -->
+	<div class="flex flex-row gap-2 mb-3 mt-5 items-center justify-between">
+		<div
+			class="flex gap-2 font-bold text-lg text-neutral-900 dark:text-neutral-100 transition relative ml-3
+            before:w-1 before:h-4 before:rounded-md before:bg-[var(--primary)]
+            before:absolute before:-left-3 before:top-[0.33rem]"
+		>
+			{i18n(I18nKey.settingsSaturation)}
+			<button
+				aria-label="Reset to Default"
+				class="btn-regular w-7 h-7 rounded-md active:scale-90"
+				class:opacity-0={saturation === defaultSaturation}
+				class:pointer-events-none={saturation === defaultSaturation}
+				on:click={resetSaturation}
+			>
+				<div class="text-[var(--btn-content)]">
+					<Icon
+						icon="fa7-solid:arrow-rotate-left"
+						class="text-[0.875rem]"
+					></Icon>
+				</div>
+			</button>
+		</div>
+		<div class="flex gap-1">
+			<div
+				class="transition bg-[var(--btn-regular-bg)] w-10 h-7 rounded-md flex justify-center
+            font-bold text-sm items-center text-[var(--btn-content)]"
+			>
+				{Math.round(saturation * 100)}
+			</div>
+		</div>
+	</div>
+	<div
+		class="w-full h-6 px-1 bg-[var(--btn-regular-bg)] rounded select-none"
+	>
+		<input
+			aria-label={i18n(I18nKey.settingsSaturation)}
+			type="range"
+			min="0"
+			max="1"
+			step="0.05"
+			bind:value={saturation}
+			class="slider"
 			style="width: 100%"
 		/>
 	</div>

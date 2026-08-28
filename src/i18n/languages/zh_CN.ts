@@ -25,6 +25,7 @@ export const zh_CN: Translation = {
 
 	// 设置面板
 	[Key.settingsRadius]: "圆角大小",
+	[Key.settingsSaturation]: "饱和度",
 	[Key.settingsSidebarWidgets]: "侧栏组件",
 	[Key.settingsLeftSidebar]: "左侧栏",
 	[Key.settingsRightSidebar]: "右侧栏",
@@ -204,6 +205,13 @@ export const zh_CN: Translation = {
 	[Key.scheduleSubtitle]: "期待的事情与重要日程",
 	[Key.scheduleYearUnit]: "年",
 	[Key.scheduleMonthUnit]: "月",
+
+	// 书架页面
+	[Key.bookshelf]: "书架",
+	[Key.bookshelfSubtitle]: "我的书架与阅读清单",
+	[Key.bookshelfRead]: "阅读",
+	[Key.bookshelfEmpty]: "书架空空如也",
+	[Key.bookshelfEmptyDesc]: "在 src/data/bookshelf.ts 中添加书籍，PDF 文件放入 public/files/books/",
 
 	// 技能展示页面
 	[Key.skills]: "技能展示",

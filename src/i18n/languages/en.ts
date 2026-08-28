@@ -25,6 +25,7 @@ export const en: Translation = {
 
 	// Settings panel
 	[Key.settingsRadius]: "Corner Radius",
+	[Key.settingsSaturation]: "Saturation",
 	[Key.settingsSidebarWidgets]: "Sidebar Widgets",
 	[Key.settingsLeftSidebar]: "Left Sidebar",
 	[Key.settingsRightSidebar]: "Right Sidebar",
@@ -209,6 +210,14 @@ export const en: Translation = {
 	[Key.scheduleSubtitle]: "Things to look forward to and important dates",
 	[Key.scheduleYearUnit]: " ",
 	[Key.scheduleMonthUnit]: " ",
+
+	// Bookshelf page
+	[Key.bookshelf]: "Bookshelf",
+	[Key.bookshelfSubtitle]: "My bookshelf and reading list",
+	[Key.bookshelfRead]: "Read",
+	[Key.bookshelfEmpty]: "The bookshelf is empty",
+	[Key.bookshelfEmptyDesc]:
+		"Add books in src/data/bookshelf.ts and put PDF files in public/files/books/",
 
 	// RSS Page
 	[Key.rss]: "RSS Feed",

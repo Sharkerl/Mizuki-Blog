@@ -1,0 +1,93 @@
+---
+import { BookCard } from "@components/features/bookshelf";
+import { PageHeader } from "@components/features/page-header";
+import HomeTabBar from "@components/features/posts/HomeTabBar.astro";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+
+import { siteConfig } from "../config";
+import { bookshelfData } from "../data/bookshelf";
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
+
+if (!siteConfig.featurePages.bookshelf) {
+	return Astro.redirect("/404/");
+}
+
+const title = i18n(I18nKey.bookshelf);
+const subtitle = i18n(I18nKey.bookshelfSubtitle);
+---
+
+<MainGridLayout title={title} description={subtitle}>
+	<!-- 不引入 right-sidebar-layout.js：书架页不参与列表/网格布局切换，
+	     主内容区宽度保持恒定，卡片尺寸不随布局模式变化 -->
+
+	<!-- PDF 第一页封面渲染（cover: "default" 模式，Swup 兼容的经典脚本） -->
+	<script is:inline src="/js/bookshelf-page-handler.js"></script>
+
+	<HomeTabBar />
+
+	<div
+		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32"
+	>
+		<div class="card-base z-10 px-6 sm:px-9 py-6 relative w-full">
+			<PageHeader title={title} subtitle={subtitle} />
+
+			{
+				bookshelfData.length > 0 ? (
+					<div
+						class="grid gap-4 items-start"
+						id="bookshelf-grid"
+					>
+						{bookshelfData.map((book, index) => (
+							<BookCard
+								book={book}
+								animationDelay={Math.min(index, 11) * 40}
+							/>
+						))}
+					</div>
+				) : (
+					<div class="text-center py-16">
+						<iconify-icon
+							icon="material-symbols:local-library"
+							width="64"
+							height="64"
+							class="text-black/15 dark:text-white/15 mb-4"
+						></iconify-icon>
+						<h3 class="text-lg font-medium text-black/90 dark:text-white/90 mb-2">
+							{i18n(I18nKey.bookshelfEmpty)}
+						</h3>
+						<p class="text-black/60 dark:text-white/60">
+							{i18n(I18nKey.bookshelfEmptyDesc)}
+						</p>
+					</div>
+				)
+			}
+		</div>
+	</div>
+</MainGridLayout>
+
+<style is:global>
+	/* 固定列数：书架页不参与列表/网格布局切换，卡片尺寸恒定；
+	   桌面端减少列数让卡片更大（≥1024px 4 列，超宽屏 ≥1536px 才 5 列） */
+	#bookshelf-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	@media (min-width: 640px) {
+		#bookshelf-grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 1024px) {
+		#bookshelf-grid {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+	}
+
+	@media (min-width: 1536px) {
+		#bookshelf-grid {
+			grid-template-columns: repeat(5, minmax(0, 1fr));
+		}
+	}
+</style>

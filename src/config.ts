@@ -36,6 +36,7 @@ export const siteConfig: SiteConfig = {
 	themeColor: {
 		hue: 240, // 主题色的默认色相，范围从 0 到 360。例如：红色：0，青色：200，蓝绿色：250，粉色：345
 		fixed: false, // 对访问者隐藏主题色选择器
+		saturation: 1, // 主题色饱和度 0-1（色度缩放系数），觉得默认太鲜艳可调低（如 0.6）
 	},
 
 	// 特色页面开关配置（关闭未使用的页面有助于提升 SEO，关闭后请记得在 navbarConfig 中移除对应链接）
@@ -52,6 +53,7 @@ export const siteConfig: SiteConfig = {
 		footprint: true, // 足迹页面开关
 		vocabulary: true, // 单词本页面开关
 		schedule: true, // 日程簿页面开关
+		bookshelf: true, // 书架页面开关
 	},
 
 	// 顶栏标题配置
@@ -129,6 +131,12 @@ export const siteConfig: SiteConfig = {
 				name: "日程簿",
 				url: "/schedule/",
 				icon: "material-symbols:calendar-month",
+				enable: true,
+			},
+			{
+				name: "书架",
+				url: "/bookshelf/",
+				icon: "material-symbols:local-library",
 				enable: true,
 			},
 		],

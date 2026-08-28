@@ -55,6 +55,7 @@ export interface SiteConfig {
 	themeColor: {
 		hue: number;
 		fixed: boolean;
+		saturation?: number; // 主题色饱和度 0-1（oklch 色度缩放系数），默认 1
 	};
 
 	// 特色页面开关配置
@@ -71,6 +72,7 @@ export interface SiteConfig {
 		footprint: boolean; // 地图页面开关
 		vocabulary: boolean; // 单词本页面开关
 		schedule: boolean; // 日程簿页面开关
+		bookshelf: boolean; // 书架页面开关
 	};
 
 	// 主页内容标签栏配置
