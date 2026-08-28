@@ -91,24 +91,20 @@ const contentMappings = [
 ];
 
 for (const mapping of contentMappings) {
-	const srcPath = path.join(CONTENT_DIR, mapping.src);
-	const destPath = path.join(rootDir, mapping.dest);
+	const srcPath = path.resolve(CONTENT_DIR, mapping.src);
+	const destPath = path.resolve(rootDir, mapping.dest);
 
 	if (!fs.existsSync(srcPath)) {
 		console.log(`跳过不存在的源目录：${mapping.src}`);
 		continue;
 	}
 
-	// 如果目标已存在且不是符号链接,备份它
+	// 如果目标已存在且不是符号链接，直接删除
+	// （旧实现备份为 .backup：一方面会随构建产物打包浪费空间，
+	//   另一方面容器内 rename 可能因跨设备 EXDEV 失败导致链接创建中断）
 	if (fs.existsSync(destPath) && !fs.lstatSync(destPath).isSymbolicLink()) {
-		const backupPath = `${destPath}.backup`;
-		console.log(
-			`正在备份已有内容：${mapping.dest} -> ${mapping.dest}.backup`,
-		);
-		if (fs.existsSync(backupPath)) {
-			fs.rmSync(backupPath, { recursive: true, force: true });
-		}
-		fs.renameSync(destPath, backupPath);
+		console.log(`正在移除已有内容：${mapping.dest}`);
+		fs.rmSync(destPath, { recursive: true, force: true });
 	}
 
 	// 删除现有的符号链接
