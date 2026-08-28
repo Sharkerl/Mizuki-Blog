@@ -192,6 +192,10 @@ export const ja: Translation = {
 	[Key.projectsVisit]: "プロジェクトを開く",
 	[Key.projectsGitHub]: "GitHub",
 
+	// おすすめプロジェクトページ
+	[Key.recommendedProjects]: "おすすめプロジェクト",
+	[Key.recommendedProjectsSubtitle]: "私のおすすめのプロジェクトとツール",
+
 	// RSSページ
 	[Key.rss]: "RSSフィード",
 	[Key.rssDescription]: "最新情報を受け取るために購読する",

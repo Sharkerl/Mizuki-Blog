@@ -12,6 +12,10 @@ interface Props {
 	zoomInLabel: string;
 	zoomOutLabel: string;
 	resetViewLabel: string;
+	defaultCenter: { lat: number; lng: number };
+	defaultZoom: number;
+	minZoom: number;
+	maxZoom: number;
 }
 
 const {
@@ -22,6 +26,10 @@ const {
 	zoomInLabel = "",
 	zoomOutLabel = "",
 	resetViewLabel = "",
+	defaultCenter,
+	defaultZoom,
+	minZoom,
+	maxZoom,
 } = Astro.props;
 
 // 服务端按经纬度分组，弹窗内容服务端渲染到 <template> 中
@@ -77,7 +85,7 @@ const markerData = groups.map((group, index) => ({
 	}
 </div>
 
-<script is:inline define:vars={{ markerData }}>
+<script is:inline define:vars={{ markerData, defaultCenter, defaultZoom, minZoom, maxZoom }}>
 	(function () {
 		"use strict";
 
@@ -188,11 +196,21 @@ const markerData = groups.map((group, index) => ({
 
 			destroyMap();
 
+			// 缩放级别钳制到配置范围内
+			var initialZoom = Math.min(
+				Math.max(defaultZoom, minZoom),
+				maxZoom,
+			);
+			var initialCenter = [defaultCenter.lat, defaultCenter.lng];
+
 			var map = L.map(container, {
 				scrollWheelZoom: false,
 				zoomControl: false,
 				attributionControl: false,
+				minZoom: minZoom,
+				maxZoom: maxZoom,
 			});
+			map.setView(initialCenter, initialZoom);
 			window[MAP_STORE_KEY] = map;
 
 			// 位置数据范围：中国 + 日本
@@ -205,8 +223,8 @@ const markerData = groups.map((group, index) => ({
 
 			// 本地离线瓦片：z4-6 广域覆盖，z7-9 为东部中国细节瓦片
 			L.tileLayer("/tiles/{z}/{x}/{y}.png", {
-				minZoom: 4,
-				maxZoom: 9,
+				minZoom: minZoom,
+				maxZoom: maxZoom,
 				noWrap: true,
 				bounds: L.latLngBounds([
 					[15, 70],
@@ -230,9 +248,7 @@ const markerData = groups.map((group, index) => ({
 				popupAnchor: [0, -10],
 			});
 
-			var latlngs = [];
 			markerData.forEach(function (marker) {
-				latlngs.push([marker.lat, marker.lng]);
 				var template = document.getElementById(marker.tpl);
 				var popupNode = template
 					? template.content.firstElementChild
@@ -245,15 +261,10 @@ const markerData = groups.map((group, index) => ({
 					.addTo(map);
 			});
 
-			function fitView() {
-				map.fitBounds(L.latLngBounds(latlngs), {
-					padding: [48, 48],
-					maxZoom: 6,
-				});
+			function resetView() {
+				map.setView(initialCenter, initialZoom);
 				map.invalidateSize();
 			}
-
-			fitView();
 
 			// 缩放按钮：事件委托，单监听器避免重复绑定
 			var page = container.closest(".map-page");
@@ -271,7 +282,7 @@ const markerData = groups.map((group, index) => ({
 					} else if (action === "zoom-out") {
 						map.zoomOut();
 					} else if (action === "reset") {
-						fitView();
+						resetView();
 					}
 				});
 			}

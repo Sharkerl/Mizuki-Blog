@@ -1,4 +1,4 @@
-﻿import type {
+import type {
 	AnnouncementConfig,
 	CommentConfig,
 	ExpressiveCodeConfig,
@@ -44,10 +44,11 @@ export const siteConfig: SiteConfig = {
 		diary: true, // 日记页面开关
 		friends: true, // 友链页面开关
 		projects: true, // 项目页面开关
+		recommendedProjects: true, // 项目推荐页面开关
 		skills: true, // 技能页面开关
 		timeline: true, // 时间线页面开关
 		albums: true, // 相册页面开关
-		devices: true, // 设备页面开关
+		devices: false, // 设备页面开关
 		footprint: true, // 足迹页面开关
 	},
 
@@ -330,12 +331,12 @@ export const navBarConfig: NavBarConfig = {
 					url: "/map/",
 					icon: "material-symbols:location-on",
 				},
-				{
-					name: "Devices",
-					url: "/devices/",
-					icon: "material-symbols:devices",
-					external: false,
-				},
+				// {
+				// 	name: "Devices",
+				// 	url: "/devices/",
+				// 	icon: "material-symbols:devices",
+				// 	external: false,
+				// },
 			],
 		},
 		{
@@ -364,6 +365,11 @@ export const navBarConfig: NavBarConfig = {
 					name: "Projects",
 					url: "/projects/",
 					icon: "material-symbols:work",
+				},
+				{
+					name: "Recommended Projects",
+					url: "/recommended-projects/",
+					icon: "material-symbols:recommend",
 				},
 				{
 					name: "Skills",
@@ -734,10 +740,13 @@ export const widgetConfigs = {
 
 // 地图配置
 export const MapConfig = {
-	// 默认聚焦点
+	// 默认视野：地图页初始加载与"重置视野"按钮使用的中心点和缩放级别
 	defaultCenter: {
 		lat: 32.0415, // 纬度
-		lon: 118.7674, // 经度
-		zoom: 12, // 缩放级别（Leaflet 常用 0-19）
+		lng: 118.7674, // 经度（东经为正）
+		zoom: 6, // 默认缩放级别，超出 minZoom-maxZoom 范围时会被自动钳制
 	},
+	// 缩放级别限制（本地瓦片库覆盖 z4-z9，z7-z9 仅覆盖东部中国）
+	minZoom: 4, // 最小缩放级别
+	maxZoom: 9, // 最大缩放级别
 };

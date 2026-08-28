@@ -186,6 +186,10 @@ export const zh_TW: Translation = {
 	[Key.projectsVisit]: "前往專案",
 	[Key.projectsGitHub]: "GitHub",
 
+	// 專案推薦頁面
+	[Key.recommendedProjects]: "專案推薦",
+	[Key.recommendedProjectsSubtitle]: "我推薦的專案與工具",
+
 	// RSS 頁面
 	[Key.rss]: "RSS 訂閱",
 	[Key.rssDescription]: "訂閱獲取最新更新",

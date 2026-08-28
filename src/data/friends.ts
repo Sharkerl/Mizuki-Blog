@@ -69,14 +69,6 @@ export const friendsData: FriendItem[] = [
 		siteurl: "https://mzh.moegirl.org.cn/",
 		tags: ["Animation", "Information"],
 	},
-	{
-		id: 8,
-		title: "Nanocompress",
-		imgurl: "https://cdn.jsdelivr.net/gh/Sharkerl/ImageHostingbyHand/nanocompress.webp",
-		desc: "Image handling tools, no uploading",
-		siteurl: "https://www.nanocompress.com/",
-		tags: ["Handle", "Tools"],
-	},
 ];
 
 // 获取所有友情链接数据

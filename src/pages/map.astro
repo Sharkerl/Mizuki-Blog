@@ -4,7 +4,7 @@ import "../styles/map.css";
 import { Map } from "@components/features/map";
 import { PageHeader } from "@components/features/page-header";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { siteConfig } from "../config";
+import { MapConfig, siteConfig } from "../config";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import { getSortedPostsList, parseLocation } from "@utils/content-utils";
@@ -52,6 +52,10 @@ const subtitle = i18n(I18nKey.footprintSubtitle);
 				zoomInLabel={i18n(I18nKey.footprintZoomIn)}
 				zoomOutLabel={i18n(I18nKey.footprintZoomOut)}
 				resetViewLabel={i18n(I18nKey.footprintResetView)}
+				defaultCenter={{ lat: MapConfig.defaultCenter.lat, lng: MapConfig.defaultCenter.lng }}
+				defaultZoom={MapConfig.defaultCenter.zoom}
+				minZoom={MapConfig.minZoom}
+				maxZoom={MapConfig.maxZoom}
 			/>
 		</div>
 	</div>

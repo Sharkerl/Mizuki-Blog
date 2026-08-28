@@ -186,6 +186,10 @@ export const zh_CN: Translation = {
 	[Key.projectsVisit]: "前往",
 	[Key.projectsGitHub]: "GitHub",
 
+	// 项目推荐页面
+	[Key.recommendedProjects]: "项目推荐",
+	[Key.recommendedProjectsSubtitle]: "我推荐的项目与工具",
+
 	// 技能展示页面
 	[Key.skills]: "技能展示",
 	[Key.skillsSubtitle]: "我的技术技能和专业知识",

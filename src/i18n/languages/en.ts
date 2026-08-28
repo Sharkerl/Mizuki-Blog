@@ -191,6 +191,10 @@ export const en: Translation = {
 	[Key.projectsVisit]: "Visit Project",
 	[Key.projectsGitHub]: "GitHub",
 
+	// Recommended projects page
+	[Key.recommendedProjects]: "Recommended Projects",
+	[Key.recommendedProjectsSubtitle]: "Projects and tools I recommend",
+
 	// RSS Page
 	[Key.rss]: "RSS Feed",
 	[Key.rssDescription]: "Subscribe to get latest updates",

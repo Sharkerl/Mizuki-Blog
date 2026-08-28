@@ -182,6 +182,10 @@ enum I18nKey {
 	projectsVisit = "projectsVisit",
 	projectsGitHub = "projectsGitHub",
 
+	// 项目推荐页面
+	recommendedProjects = "recommendedProjects",
+	recommendedProjectsSubtitle = "recommendedProjectsSubtitle",
+
 	// Skills page
 	skills = "skills",
 	skillsSubtitle = "skillsSubtitle",
