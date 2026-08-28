@@ -58,13 +58,24 @@ if (!fs.existsSync(CONTENT_DIR)) {
 	if (fs.existsSync(path.join(CONTENT_DIR, ".git"))) {
 		try {
 			console.log("正在拉取最新内容...");
-			execSync("git pull --allow-unrelated-histories", {
+			// fetch + reset 强制与远程一致：
+			// 不依赖分支 upstream tracking，也不会因合并冲突失败
+			execSync("git fetch origin", {
+				stdio: "inherit",
+				cwd: CONTENT_DIR,
+			});
+			execSync("git reset --hard origin/HEAD", {
+				stdio: "inherit",
+				cwd: CONTENT_DIR,
+			});
+			execSync("git clean -fd", {
 				stdio: "inherit",
 				cwd: CONTENT_DIR,
 			});
 			console.log("内容更新成功");
 		} catch (error) {
 			console.warn("内容更新失败：", error.message);
+			console.warn("将沿用已有内容继续构建（可能不是最新）");
 		}
 	}
 }
