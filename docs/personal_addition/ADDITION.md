@@ -129,7 +129,30 @@ export const MapConfig = {
 
 ---
 
-## 5. 其他杂项修复
+## 6. 部署体积优化（帽子云 300MB 限制）
+
+### 问题
+帽子云构建产物限制 300MB，原构建产物约 554MB。
+
+### 原因与修复（554MB → 222.8MB）
+
+| 问题 | 修复 | 节省 |
+|------|------|------|
+| `public/assets/font/` 34 个 TTF（336MB）全量复制进 dist，压缩脚本只处理 2 个且不清理原文件 | `config.ts` 的 `font.asciiFont/cjkFont.localFonts` 扩展为 main.css 中 @font-face 引用的全部字体；[compress-fonts.js](../../scripts/compress-fonts.js) 末尾新增 `cleanupDistFonts()` 删除 dist 中已被 woff2 替代的原始 TTF | ~331MB |
+| `public/images.backup/`（84.6MB）——sync-content.js 首次把 public/images 转为 junction 时的旧备份，一直被复制进 dist | 直接删除（public/images 已是 junction，不会再生成） | 84.6MB |
+| `content/images/` 原始大图 84.6MB（TenkiNoKo 相册多个 2-6MB 图） | 新增 [scripts/compress-images.mjs](../../scripts/compress-images.mjs)：sharp 重编码（jpg q82 mozjpeg / png 量化），不改变文件名和格式；已压缩 68 个文件 | ~39MB（原图）+ 对应 _astro 优化副本 |
+
+### 维护要点
+
+- **新增字体文件时**：必须同时加入 `config.ts` 的 `localFonts` 列表并在 `main.css` 声明 @font-face，否则该 TTF 会以原尺寸进入 dist（构建后跑 `node scripts/compress-fonts.js` 可验证）
+- **新增图片后**：建议跑 `node scripts/compress-images.mjs`（有损但不可逆；content 是 git 仓库，原始图可通过 git 历史找回；压缩无收益的文件自动跳过）
+- **已知例外**：`content/images/albums/TenkiNoKo/1033113.png`（6MB）为特殊 PNG 格式，sharp 无法读取（libspng read error），保持原样；如需压缩需手动转格式
+- 构建时间因全量字体压缩增加约 4-5 分钟（34 个字体子集化），属正常
+- `.env` 示例的 SSH 地址仅限本地；**云端部署（帽子云等）必须用 HTTPS 格式的 CONTENT_REPO_URL**，否则内容同步克隆会失败
+
+---
+
+## 7. 其他杂项修复
 
 - `src/i18n/i18nKey.ts`：修复 `footprintEmpty` 枚举值尾部多余空格
 - `src/styles/main.css`：删除原地图弹窗样式块（引用了不存在的 `--popup-*` 变量且滥用 `!important`），迁移至 `src/styles/map.css` 并改用真实主题变量（`--card-bg` / `--primary` / `--btn-content` / `--line-divider`）
@@ -138,10 +161,11 @@ export const MapConfig = {
 
 ---
 
-## 6. 维护备忘
+## 8. 维护备忘
 
-- **主题更新合并时**：重点检查本文档第 1-4 节涉及文件；上游若改动 SidebarColumn / Navbar / DropdownMenu / NavMenuPanel / main.css，需手动合并个人定制部分
+- **主题更新合并时**：重点检查本文档第 1-4 节涉及文件；上游若改动 SidebarColumn / Navbar / DropdownMenu / NavMenuPanel / main.css / compress-fonts.js，需手动合并个人定制部分
 - **内容分离链路**：`src/data`、`src/content/posts`、`src/content/spec`、`public/images` 均为指向 `content/` 的 junction，新增数据文件直接放 `src/data` 即自动进入内容仓库
 - **本地瓦片更新**：替换 `public/tiles/` 后按实际覆盖级别调整 `MapConfig` 的 minZoom/maxZoom
+- **部署平台**：帽子云需 Node ≥ 22.12（package.json engines 与 .nvmrc 已声明）+ 环境变量 `ENABLE_CONTENT_SYNC=true` 和 HTTPS 格式的 `CONTENT_REPO_URL`
 
 **最后更新**: 2026-08-28

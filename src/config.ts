@@ -216,19 +216,58 @@ export const siteConfig: SiteConfig = {
 	font: {
 		// 注意：自定义字体需要在 src/styles/main.css 中引入字体文件
 		// 注意：字体子集优化功能目前仅支持 TTF 格式字体,开启后需要在生产环境才能看到效果,在Dev环境下显示的是浏览器默认字体!
+		// 注意：localFonts 必须列出 main.css 中 @font-face 引用的全部字体文件，
+		// 构建后 compress-fonts.js 会将其子集化为 woff2 并删除 dist 中的原始 TTF，
+		// 避免部署产物超出托管平台体积限制（未列出的字体文件会原样保留在 dist 中）
 		asciiFont: {
 			// 英文字体 - 优先级最高
 			// 指定为英文字体则无论字体包含多大范围，都只会保留 ASCII 字符子集
 			fontFamily: "MapleMonoNormal",
 			fontWeight: "400",
-			localFonts: ["MapleMonoNormal-Regular.ttf"],
+			localFonts: [
+				"MapleMonoNormal-Thin.ttf",
+				"MapleMonoNormal-ExtraLight.ttf",
+				"MapleMonoNormal-Light.ttf",
+				"MapleMonoNormal-Regular.ttf",
+				"MapleMonoNormal-Medium.ttf",
+				"MapleMonoNormal-SemiBold.ttf",
+				"MapleMonoNormal-Bold.ttf",
+				"MapleMonoNormal-ExtraBold.ttf",
+				"MapleMonoNormal-Italic.ttf",
+				"MapleMonoNormal-ThinItalic.ttf",
+				"MapleMonoNormal-ExtraLightItalic.ttf",
+				"MapleMonoNormal-LightItalic.ttf",
+				"MapleMonoNormal-MediumItalic.ttf",
+				"MapleMonoNormal-SemiBoldItalic.ttf",
+				"MapleMonoNormal-BoldItalic.ttf",
+				"MapleMonoNormal-ExtraBoldItalic.ttf",
+			],
 			enableCompress: true, // 启用字体子集优化，减少字体文件大小
 		},
 		cjkFont: {
 			// 中日韩字体 - 作为回退字体
 			fontFamily: "MapleMono-NF-CN",
 			fontWeight: "500",
-			localFonts: ["MapleMono-NF-CN-Regular.ttf"],
+			localFonts: [
+				"MapleMono-NF-CN-Thin.ttf",
+				"MapleMono-NF-CN-ExtraLight.ttf",
+				"MapleMono-NF-CN-Light.ttf",
+				"MapleMono-NF-CN-Regular.ttf",
+				"MapleMono-NF-CN-Medium.ttf",
+				"MapleMono-NF-CN-SemiBold.ttf",
+				"MapleMono-NF-CN-Bold.ttf",
+				"MapleMono-NF-CN-ExtraBold.ttf",
+				"MapleMono-NF-CN-Italic.ttf",
+				"MapleMono-NF-CN-ThinItalic.ttf",
+				"MapleMono-NF-CN-ExtraLightItalic.ttf",
+				"MapleMono-NF-CN-LightItalic.ttf",
+				"MapleMono-NF-CN-MediumItalic.ttf",
+				"MapleMono-NF-CN-SemiBoldItalic.ttf",
+				"MapleMono-NF-CN-BoldItalic.ttf",
+				"MapleMono-NF-CN-ExtraBoldItalic.ttf",
+				"ZenMaruGothic-Medium.ttf",
+				"loli.ttf",
+			],
 			enableCompress: true, // 启用字体子集优化，减少字体文件大小
 		},
 	},

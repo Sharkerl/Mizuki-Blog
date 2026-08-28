@@ -1341,5 +1341,48 @@ async function updateCssFontReferences() {
 	}
 }
 
+// 清理 dist 中已被 woff2 替代的原始 TTF/OTF 字体文件
+// （public/ 中的源文件不受影响，仅删除构建产物中的冗余副本）
+function cleanupDistFonts() {
+	try {
+		const distFontDir = path.join(__dirname, "../dist/assets/font");
+		if (!fs.existsSync(distFontDir)) {
+			return;
+		}
+
+		const files = fs.readdirSync(distFontDir);
+		let removedCount = 0;
+		let freedBytes = 0;
+
+		for (const file of files) {
+			const ext = path.extname(file).toLowerCase();
+			if (ext !== ".ttf" && ext !== ".otf") {
+				continue;
+			}
+
+			const baseName = path.basename(file, ext);
+			const woff2Path = path.join(distFontDir, `${baseName}.woff2`);
+
+			// 存在同名字重压缩后的 woff2，说明 TTF 已被替代，删除以减小部署体积
+			if (fs.existsSync(woff2Path)) {
+				const filePath = path.join(distFontDir, file);
+				freedBytes += fs.statSync(filePath).size;
+				fs.rmSync(filePath);
+				removedCount++;
+			}
+		}
+
+		if (removedCount > 0) {
+			console.log(
+				`✓ Removed ${removedCount} original font files from dist (freed ${(freedBytes / 1048576).toFixed(1)} MB)`,
+			);
+		}
+	} catch (error) {
+		console.error("⚠ Font cleanup failed:", error.message);
+	}
+}
+
 // 运行压缩
-compressFonts().then(() => updateCssFontReferences());
+compressFonts()
+	.then(() => updateCssFontReferences())
+	.then(() => cleanupDistFonts());
