@@ -186,6 +186,21 @@ enum I18nKey {
 	recommendedProjects = "recommendedProjects",
 	recommendedProjectsSubtitle = "recommendedProjectsSubtitle",
 
+	// 单词本页面
+	vocabulary = "vocabulary",
+	vocabularySubtitle = "vocabularySubtitle",
+	underDevelopment = "underDevelopment",
+	vocabularySortDefault = "vocabularySortDefault",
+	vocabularySortAZ = "vocabularySortAZ",
+	vocabularySortRandom = "vocabularySortRandom",
+	vocabularySearchPlaceholder = "vocabularySearchPlaceholder",
+
+	// 日程簿页面
+	schedule = "schedule",
+	scheduleSubtitle = "scheduleSubtitle",
+	scheduleYearUnit = "scheduleYearUnit",
+	scheduleMonthUnit = "scheduleMonthUnit",
+
 	// Skills page
 	skills = "skills",
 	skillsSubtitle = "skillsSubtitle",

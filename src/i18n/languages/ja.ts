@@ -196,6 +196,21 @@ export const ja: Translation = {
 	[Key.recommendedProjects]: "おすすめプロジェクト",
 	[Key.recommendedProjectsSubtitle]: "私のおすすめのプロジェクトとツール",
 
+	// 単語帳ページ
+	[Key.vocabulary]: "単語帳",
+	[Key.vocabularySubtitle]: "単語を記録して復習する",
+	[Key.underDevelopment]: "開発中です、お楽しみに",
+	[Key.vocabularySortDefault]: "デフォルト順",
+	[Key.vocabularySortAZ]: "A-Z 順",
+	[Key.vocabularySortRandom]: "ランダム順",
+	[Key.vocabularySearchPlaceholder]: "単語や訳を検索…",
+
+	// スケジュールページ
+	[Key.schedule]: "スケジュール",
+	[Key.scheduleSubtitle]: "楽しみなことと大切な予定",
+	[Key.scheduleYearUnit]: "年",
+	[Key.scheduleMonthUnit]: "月",
+
 	// RSSページ
 	[Key.rss]: "RSSフィード",
 	[Key.rssDescription]: "最新情報を受け取るために購読する",

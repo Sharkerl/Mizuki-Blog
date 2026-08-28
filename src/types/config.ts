@@ -69,7 +69,12 @@ export interface SiteConfig {
 		albums: boolean; // 相册页面开关
 		devices: boolean; // 设备页面开关
 		footprint: boolean; // 地图页面开关
+		vocabulary: boolean; // 单词本页面开关
+		schedule: boolean; // 日程簿页面开关
 	};
+
+	// 主页内容标签栏配置
+	homeTabBar?: HomeTabBarConfig;
 
 	// 文章列表布局配置
 	postListLayout: {
@@ -216,6 +221,19 @@ export enum LinkPreset {
 	Skills = 8,
 	Timeline = 9,
 	Map = 10,
+}
+
+// 主页内容标签栏按钮配置
+export interface HomeTabBarItem {
+	name: string; // 按钮显示文本（字面字符串，不做 i18n）
+	url: string; // 跳转链接，如 "/" 或 "/vocabulary/"
+	icon?: string; // 可选图标（astro-icon 图标名，如 "material-symbols:article"）
+	enable?: boolean; // 是否显示该按钮，默认 true
+}
+
+export interface HomeTabBarConfig {
+	enable: boolean; // 是否显示该标签栏
+	tabs: HomeTabBarItem[]; // 按钮列表，可随时增删
 }
 
 export interface NavBarLink {

@@ -1,6 +1,7 @@
 ---
 import Pagination from "@components/control/Pagination.astro";
 import CategoryBar from "@components/features/posts/CategoryBar.astro";
+import HomeTabBar from "@components/features/posts/HomeTabBar.astro";
 import PostPage from "@components/features/posts/PostPage.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import type { GetStaticPaths } from "astro";
@@ -26,6 +27,7 @@ const len = page.data.length;
 ---
 
 <MainGridLayout>
+	<HomeTabBar />
 	{showCategoryBar && <CategoryBar />}
 	<PostPage page={page} />
 	<Pagination

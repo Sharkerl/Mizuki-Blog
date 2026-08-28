@@ -50,6 +50,8 @@ export const siteConfig: SiteConfig = {
 		albums: true, // 相册页面开关
 		devices: false, // 设备页面开关
 		footprint: true, // 足迹页面开关
+		vocabulary: true, // 单词本页面开关
+		schedule: true, // 日程簿页面开关
 	},
 
 	// 顶栏标题配置
@@ -103,6 +105,33 @@ export const siteConfig: SiteConfig = {
 		categoryBar: {
 			enable: true, // 是否在文章列表页显示分类导航条
 		},
+	},
+
+	// 主页内容标签栏配置（文章列表分类栏上方的切换栏）
+	homeTabBar: {
+		enable: true, // 是否显示该标签栏（整个菜单）
+		tabs: [
+			// 按钮列表，以后可随时在此添加新按钮，无需改代码
+			// 每个按钮可通过 enable 控制是否显示（不写默认显示）
+			{
+				name: "文章",
+				url: "/",
+				icon: "material-symbols:article",
+				enable: true,
+			},
+			{
+				name: "单词本",
+				url: "/vocabulary/",
+				icon: "material-symbols:menu-book",
+				enable: true,
+			},
+			{
+				name: "日程簿",
+				url: "/schedule/",
+				icon: "material-symbols:calendar-month",
+				enable: true,
+			},
+		],
 	},
 
 	// 标签样式配置

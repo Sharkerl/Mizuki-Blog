@@ -190,6 +190,21 @@ export const zh_TW: Translation = {
 	[Key.recommendedProjects]: "專案推薦",
 	[Key.recommendedProjectsSubtitle]: "我推薦的專案與工具",
 
+	// 單字本頁面
+	[Key.vocabulary]: "單字本",
+	[Key.vocabularySubtitle]: "記錄與複習單字",
+	[Key.underDevelopment]: "功能開發中，敬請期待",
+	[Key.vocabularySortDefault]: "預設排序",
+	[Key.vocabularySortAZ]: "A-Z 排序",
+	[Key.vocabularySortRandom]: "隨機排序",
+	[Key.vocabularySearchPlaceholder]: "搜尋單字或翻譯…",
+
+	// 行程簿頁面
+	[Key.schedule]: "行程簿",
+	[Key.scheduleSubtitle]: "期待的事情與重要行程",
+	[Key.scheduleYearUnit]: "年",
+	[Key.scheduleMonthUnit]: "月",
+
 	// RSS 頁面
 	[Key.rss]: "RSS 訂閱",
 	[Key.rssDescription]: "訂閱獲取最新更新",

@@ -195,6 +195,21 @@ export const en: Translation = {
 	[Key.recommendedProjects]: "Recommended Projects",
 	[Key.recommendedProjectsSubtitle]: "Projects and tools I recommend",
 
+	// Vocabulary page
+	[Key.vocabulary]: "Vocabulary",
+	[Key.vocabularySubtitle]: "Record and review words",
+	[Key.underDevelopment]: "Under development, stay tuned",
+	[Key.vocabularySortDefault]: "Default Order",
+	[Key.vocabularySortAZ]: "A-Z Order",
+	[Key.vocabularySortRandom]: "Random Order",
+	[Key.vocabularySearchPlaceholder]: "Search words or translations...",
+
+	// Schedule page
+	[Key.schedule]: "Schedule",
+	[Key.scheduleSubtitle]: "Things to look forward to and important dates",
+	[Key.scheduleYearUnit]: " ",
+	[Key.scheduleMonthUnit]: " ",
+
 	// RSS Page
 	[Key.rss]: "RSS Feed",
 	[Key.rssDescription]: "Subscribe to get latest updates",

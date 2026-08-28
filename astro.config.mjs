@@ -129,7 +129,8 @@ export default defineConfig({
 			remarkMermaid,
 		],
 		rehypePlugins: [
-			rehypeKatex,
+			// strict: "ignore" 关闭 KaTeX 严格模式告警（中文等 Unicode 字符出现在数学环境中时仅按原样渲染，不再打印警告）
+			[rehypeKatex, { strict: "ignore" }],
 			[
 				rehypeExternalLinks,
 				{

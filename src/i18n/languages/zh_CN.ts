@@ -190,6 +190,21 @@ export const zh_CN: Translation = {
 	[Key.recommendedProjects]: "项目推荐",
 	[Key.recommendedProjectsSubtitle]: "我推荐的项目与工具",
 
+	// 单词本页面
+	[Key.vocabulary]: "单词本",
+	[Key.vocabularySubtitle]: "记录与复习单词",
+	[Key.underDevelopment]: "功能开发中，敬请期待",
+	[Key.vocabularySortDefault]: "默认排序",
+	[Key.vocabularySortAZ]: "A-Z 排序",
+	[Key.vocabularySortRandom]: "随机排序",
+	[Key.vocabularySearchPlaceholder]: "搜索单词或翻译…",
+
+	// 日程簿页面
+	[Key.schedule]: "日程簿",
+	[Key.scheduleSubtitle]: "期待的事情与重要日程",
+	[Key.scheduleYearUnit]: "年",
+	[Key.scheduleMonthUnit]: "月",
+
 	// 技能展示页面
 	[Key.skills]: "技能展示",
 	[Key.skillsSubtitle]: "我的技术技能和专业知识",

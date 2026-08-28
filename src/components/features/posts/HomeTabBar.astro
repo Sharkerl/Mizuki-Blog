@@ -1,0 +1,90 @@
+---
+import { Icon } from "astro-icon/components";
+
+import { siteConfig } from "@/config";
+import { url } from "@/utils/url-utils";
+
+const tabBarConfig = siteConfig.homeTabBar;
+const tabs = (
+	tabBarConfig?.enable ? (tabBarConfig.tabs ?? []) : []
+).filter((tab) => tab.enable !== false);
+---
+
+{
+	tabs.length > 0 && (
+		<div class="card-base home-tab-bar p-3 onload-animation" id="home-tab-bar">
+			<div class="flex gap-2 flex-wrap">
+				{tabs.map((tab) => (
+					<a
+						href={url(tab.url)}
+						class="tab-pill text-sm px-3 py-1 rounded-lg whitespace-nowrap flex-shrink-0
+							   transition-colors duration-200 flex items-center justify-center"
+						data-tab-url={tab.url}
+					>
+						{tab.icon && <Icon name={tab.icon} class="text-lg mr-1" />}
+						{tab.name}
+					</a>
+				))}
+			</div>
+		</div>
+	)
+}
+
+<style>
+	.home-tab-bar {
+		margin-bottom: 1rem;
+	}
+	.tab-pill {
+		border: 1.5px solid var(--line-divider);
+		color: var(--btn-content);
+		background: transparent;
+	}
+	.tab-pill:hover {
+		border-color: var(--primary);
+		color: var(--primary);
+		background: transparent;
+	}
+	.tab-pill[data-active] {
+		background: var(--primary);
+		border-color: var(--primary);
+		color: white;
+	}
+	.tab-pill[data-active]:hover {
+		background: var(--primary);
+		border-color: var(--primary);
+		opacity: 0.9;
+	}
+</style>
+
+<script>
+	function normalizePath(path: string) {
+		return path.replace(/\/$/, "");
+	}
+
+	function updateTabBar() {
+		const bar = document.getElementById("home-tab-bar");
+		if (!bar) {
+			return;
+		}
+
+		const pathname = normalizePath(window.location.pathname);
+		// 首页分页（如 /2/、/3/）视为首页
+		const isHomePagination = /^\/\d+$/.test(pathname);
+
+		const pills = bar.querySelectorAll<HTMLAnchorElement>(".tab-pill");
+		pills.forEach((pill) => {
+			const tabUrl = normalizePath(pill.getAttribute("data-tab-url") || "");
+			// "/" 归一化后为空字符串，代表首页
+			const isHomeTab = tabUrl === "";
+			if (pathname === tabUrl || (isHomeTab && isHomePagination)) {
+				pill.setAttribute("data-active", "");
+			} else {
+				pill.removeAttribute("data-active");
+			}
+		});
+	}
+
+	updateTabBar();
+	document.addEventListener("astro:page-load", updateTabBar);
+	document.addEventListener("swup:contentReplaced", updateTabBar);
+</script>

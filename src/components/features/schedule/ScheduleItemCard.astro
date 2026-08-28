@@ -1,0 +1,109 @@
+---
+/**
+ * ScheduleItemCard - 日程条目卡片组件
+ *
+ * 用于"日程簿"页面时间线，展示单条日程（日期、标题、描述、类别标签）。
+ * 标题/日期/描述使用中性文字色；类别标签跟随主题色（var(--primary)）。
+ */
+import type { ScheduleItem } from "@/data/schedule";
+
+interface Props {
+	item: ScheduleItem;
+	/** 入场动画延迟（毫秒），由父组件按序传入实现交错入场 */
+	animationDelay?: number;
+}
+
+const { item, animationDelay = 0 } = Astro.props;
+
+// 格式化日期为 "M月D日"
+const formatDate = (dateStr: string) => {
+	const [, m, d] = dateStr.split("-").map(Number);
+	return `${m}月${d}日`;
+};
+
+const dateText = item.endDate
+	? `${formatDate(item.date)} - ${formatDate(item.endDate)}`
+	: formatDate(item.date);
+
+const descriptions = (item.description ?? "")
+	.split("\n")
+	.filter((p) => p.trim().length > 0);
+---
+
+<div
+	class="schedule-card onload-animation"
+	style={`animation-delay: ${animationDelay}ms`}
+>
+	<p class="schedule-date">{dateText}</p>
+	<h3 class="schedule-title">{item.title}</h3>
+	{
+		descriptions.length > 0 &&
+			descriptions.map((paragraph) => (
+				<p class="schedule-desc">{paragraph}</p>
+			))
+	}
+	<span class="schedule-category">{item.category}</span>
+</div>
+
+<style>
+	.schedule-card {
+		border: 1.5px solid var(--line-divider);
+		border-radius: var(--radius-large);
+		background: transparent;
+		padding: 1rem 1.25rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.375rem;
+		transition:
+			border-color 200ms,
+			transform 200ms,
+			box-shadow 200ms;
+	}
+	/* 悬停上浮微交互 */
+	.schedule-card:hover {
+		border-color: var(--primary);
+		transform: translateY(-2px);
+		box-shadow: 0 4px 16px rgb(0 0 0 / 0.08);
+	}
+	:global(.dark) .schedule-card:hover {
+		box-shadow: 0 4px 16px rgb(0 0 0 / 0.3);
+	}
+	.schedule-date {
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: rgb(0 0 0 / 0.45);
+	}
+	:global(.dark) .schedule-date {
+		color: rgb(255 255 255 / 0.45);
+	}
+	/* 标题使用中性色，不随主题色变化 */
+	.schedule-title {
+		font-size: 1.125rem;
+		font-weight: 600;
+		line-height: 1.4;
+		color: rgb(0 0 0 / 0.8);
+	}
+	:global(.dark) .schedule-title {
+		color: rgb(255 255 255 / 0.8);
+	}
+	.schedule-desc {
+		font-size: 0.875rem;
+		line-height: 1.6;
+		color: rgb(0 0 0 / 0.55);
+	}
+	:global(.dark) .schedule-desc {
+		color: rgb(255 255 255 / 0.55);
+	}
+	/* 类别标签：药丸形，跟随主题色（与单词本词性徽章风格一致） */
+	.schedule-category {
+		align-self: flex-start;
+		margin-top: 0.25rem;
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.05em;
+		padding: 0.25rem 0.75rem;
+		border-radius: 9999px;
+		border: 1px solid var(--line-divider);
+		color: var(--primary);
+	}
+</style>

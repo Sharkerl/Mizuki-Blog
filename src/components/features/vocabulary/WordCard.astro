@@ -1,0 +1,51 @@
+---
+/**
+ * WordCard - 单词卡片组件
+ *
+ * 用于"单词本"页面，展示单词、中文翻译和词性。
+ * 排序/搜索交互依赖 data-word / data-translation 属性，
+ * 由 public/js/vocabulary-page-handler.js 处理。
+ */
+import type { Word } from "@/data/wordlist";
+
+interface Props {
+	word: Word;
+}
+
+const { word } = Astro.props;
+---
+
+<div
+	class="word-card rounded-lg px-4 py-3 flex flex-col gap-1"
+	data-word={word.word}
+	data-translation={word.translation}
+>
+	<div class="flex items-baseline justify-between gap-2">
+		<span class="text-lg font-semibold break-all text-black/80 dark:text-white/80">
+			{word.word}
+		</span>
+		<span
+			class="pos-badge text-xs px-1.5 py-0.5 rounded-md whitespace-nowrap flex-shrink-0"
+		>
+			{word.pos}
+		</span>
+	</div>
+	<p class="text-sm text-black/60 dark:text-white/60">
+		{word.translation}
+	</p>
+</div>
+
+<style>
+	.word-card {
+		border: 1.5px solid var(--line-divider);
+		background: transparent;
+		transition: border-color 200ms;
+	}
+	.word-card:hover {
+		border-color: var(--primary);
+	}
+	.pos-badge {
+		border: 1px solid var(--line-divider);
+		color: var(--primary);
+	}
+</style>

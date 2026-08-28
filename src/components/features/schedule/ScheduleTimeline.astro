@@ -1,0 +1,347 @@
+---
+/**
+ * ScheduleTimeline - 日程时间线组件
+ *
+ * 按年份 → 月份两级分组的垂直时间线，参照 loneapex.cn/calendar 的布局：
+ * 左侧渐变轴线 + 年份药丸（可折叠整年）+ 月份药丸（可折叠单月）+ 日程卡片。
+ * 带交错入场动画、卡片悬停上浮、折叠/展开高度过渡。
+ * 交互逻辑见 public/js/schedule-page-handler.js（Swup 兼容）。
+ */
+import type { ScheduleItem } from "@/data/schedule";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+
+import ScheduleItemCard from "./ScheduleItemCard.astro";
+
+interface Props {
+	items: ScheduleItem[];
+}
+
+const { items } = Astro.props;
+
+interface MonthGroup {
+	month: number;
+	items: ScheduleItem[];
+}
+
+interface YearGroup {
+	year: number;
+	months: MonthGroup[];
+}
+
+// 按开始日期分组到年份 → 月份（升序）
+const yearMap = new Map<number, Map<number, ScheduleItem[]>>();
+for (const item of items) {
+	const [year, month] = item.date.split("-").map(Number);
+	if (!yearMap.has(year)) {
+		yearMap.set(year, new Map());
+	}
+	const monthMap = yearMap.get(year)!;
+	if (!monthMap.has(month)) {
+		monthMap.set(month, []);
+	}
+	monthMap.get(month)!.push(item);
+}
+
+const yearGroups: YearGroup[] = Array.from(yearMap.entries())
+	.sort(([a], [b]) => a - b)
+	.map(([year, monthMap]) => ({
+		year,
+		months: Array.from(monthMap.entries())
+			.sort(([a], [b]) => a - b)
+			.map(([month, monthItems]) => ({ month, items: monthItems })),
+	}));
+---
+
+<div class="schedule-timeline" id="schedule-timeline">
+	{
+		yearGroups.map((yearGroup, yearIndex) => (
+			<section
+				class="schedule-year onload-animation"
+				data-year={yearGroup.year}
+				data-collapsed=""
+				style={`animation-delay: ${yearIndex * 80}ms`}
+			>
+				<button
+					type="button"
+					class="schedule-year-btn"
+					aria-expanded="false"
+				>
+					<span class="schedule-year-dot" />
+					<span class="schedule-year-label">
+						{yearGroup.year}
+						{i18n(I18nKey.scheduleYearUnit)}
+					</span>
+					<iconify-icon
+						icon="material-symbols:keyboard-arrow-down"
+						class="schedule-year-arrow"
+					/>
+				</button>
+				<div class="schedule-year-content">
+					<div class="schedule-year-inner">
+						{yearGroup.months.map((monthGroup) => (
+							<section
+								class="schedule-month"
+								data-month={`${yearGroup.year}-${monthGroup.month}`}
+								data-collapsed=""
+							>
+								<button
+									type="button"
+									class="schedule-month-btn"
+									aria-expanded="false"
+								>
+									<span class="schedule-month-dot" />
+									<span class="schedule-month-label">
+										{monthGroup.month}
+										{i18n(I18nKey.scheduleMonthUnit)}
+									</span>
+									<iconify-icon
+										icon="material-symbols:keyboard-arrow-down"
+										class="schedule-month-arrow"
+									/>
+								</button>
+								<div class="schedule-month-content">
+									<div class="schedule-month-inner">
+										{monthGroup.items.map((item, itemIndex) => (
+											<ScheduleItemCard
+												item={item}
+												animationDelay={itemIndex * 60}
+											/>
+										))}
+									</div>
+								</div>
+							</section>
+						))}
+					</div>
+				</div>
+			</section>
+		))
+	}
+</div>
+
+<style>
+	.schedule-timeline {
+		position: relative;
+		padding-left: 0.5rem;
+	}
+	/* 左侧垂直渐变轴线：加载时自上而下生长 */
+	.schedule-timeline::before {
+		content: "";
+		position: absolute;
+		left: 0.25rem;
+		top: 0.5rem;
+		bottom: 0.5rem;
+		width: 2px;
+		border-radius: 9999px;
+		background: linear-gradient(
+			to bottom,
+			var(--primary),
+			rgb(124 226 78)
+		);
+		opacity: 0.6;
+		transform-origin: top;
+		animation: axis-grow 0.8s ease-out both;
+	}
+	@keyframes axis-grow {
+		from {
+			transform: scaleY(0);
+		}
+		to {
+			transform: scaleY(1);
+		}
+	}
+
+	/* ===== 年份层级 ===== */
+	.schedule-year {
+		position: relative;
+		padding-left: 0;
+	}
+	.schedule-year + .schedule-year {
+		margin-top: 1.5rem;
+	}
+	.schedule-year-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		position: relative;
+		padding: 0.5625rem 1.125rem;
+		border-radius: 9999px;
+		font-size: 1rem;
+		font-weight: 700;
+		/* 固定中性色，不随主题色变化 */
+		color: rgb(0 0 0 / 0.8);
+		background: var(--btn-regular-bg);
+		border: 1px solid var(--line-divider);
+		cursor: pointer;
+		transition:
+			background 200ms,
+			transform 200ms;
+	}
+	:global(.dark) .schedule-year-btn {
+		color: rgb(255 255 255 / 0.85);
+	}
+	.schedule-year-btn:hover {
+		background: var(--btn-regular-bg-hover);
+	}
+	.schedule-year-btn:active {
+		transform: scale(0.97);
+	}
+	/* 年份圆点：比月份圆点更大 */
+	.schedule-year-dot {
+		position: absolute;
+		left: -0.5625rem;
+		top: 50%;
+		transform: translateY(-50%) scale(0);
+		width: 0.75rem;
+		height: 0.75rem;
+		border-radius: 9999px;
+		background: linear-gradient(
+			135deg,
+			var(--primary),
+			rgb(124 226 78)
+		);
+		border: 2px solid var(--card-bg);
+		animation: dot-pop-lg 0.4s ease-out 0.3s forwards;
+	}
+	@keyframes dot-pop-lg {
+		from {
+			transform: translateY(-50%) scale(0);
+		}
+		to {
+			transform: translateY(-50%) scale(1);
+		}
+	}
+	.schedule-year-arrow {
+		font-size: 1.2rem;
+		transition: transform 200ms;
+	}
+	.schedule-year-btn[aria-expanded="false"] .schedule-year-arrow {
+		transform: rotate(-90deg);
+	}
+	/* 年份折叠/展开 */
+	.schedule-year-content {
+		display: grid;
+		grid-template-rows: 1fr;
+		margin-top: 0.75rem;
+		opacity: 1;
+		transition:
+			grid-template-rows 300ms ease,
+			opacity 300ms ease,
+			margin-top 300ms ease;
+	}
+	.schedule-year[data-collapsed] .schedule-year-content {
+		grid-template-rows: 0fr;
+		margin-top: 0;
+		opacity: 0;
+	}
+	.schedule-year-inner {
+		overflow: hidden;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	/* ===== 月份层级（相对年份缩进，挂在自己的子轴线上） ===== */
+	.schedule-month {
+		position: relative;
+		padding-left: 1.25rem;
+	}
+	/* 月份子轴线（弱化，短竖线连接年份与月份） */
+	.schedule-month::before {
+		content: "";
+		position: absolute;
+		left: 0.25rem;
+		top: -0.5rem;
+		bottom: -0.5rem;
+		width: 2px;
+		border-radius: 9999px;
+		background: var(--line-divider);
+	}
+	.schedule-month:first-child::before {
+		top: 0.25rem;
+	}
+	.schedule-month:last-child::before {
+		bottom: calc(100% - 1.75rem);
+	}
+	.schedule-month-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		position: relative;
+		padding: 0.375rem 0.875rem;
+		border-radius: 9999px;
+		font-size: 0.875rem;
+		font-weight: 600;
+		/* 固定中性色，不随主题色变化 */
+		color: rgb(0 0 0 / 0.65);
+		background: transparent;
+		border: 1px solid var(--line-divider);
+		cursor: pointer;
+		transition:
+			background 200ms,
+			border-color 200ms,
+			transform 200ms;
+	}
+	:global(.dark) .schedule-month-btn {
+		color: rgb(255 255 255 / 0.7);
+	}
+	.schedule-month-btn:hover {
+		border-color: var(--primary);
+		color: var(--primary);
+	}
+	.schedule-month-btn:active {
+		transform: scale(0.97);
+	}
+	/* 月份圆点（覆盖子轴线） */
+	.schedule-month-dot {
+		position: absolute;
+		left: -1.1875rem;
+		top: 50%;
+		transform: translateY(-50%) scale(0);
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 9999px;
+		background: var(--primary);
+		border: 2px solid var(--card-bg);
+		animation: dot-pop 0.4s ease-out 0.4s forwards;
+	}
+	@keyframes dot-pop {
+		from {
+			transform: translateY(-50%) scale(0);
+		}
+		to {
+			transform: translateY(-50%) scale(1);
+		}
+	}
+	.schedule-month-arrow {
+		font-size: 1.1rem;
+		transition: transform 200ms;
+	}
+	.schedule-month-btn[aria-expanded="false"] .schedule-month-arrow {
+		transform: rotate(-90deg);
+	}
+	/* 月份折叠/展开 */
+	.schedule-month-content {
+		display: grid;
+		grid-template-rows: 1fr;
+		margin-top: 0.75rem;
+		opacity: 1;
+		transition:
+			grid-template-rows 300ms ease,
+			opacity 300ms ease,
+			margin-top 300ms ease;
+	}
+	.schedule-month[data-collapsed] .schedule-month-content {
+		grid-template-rows: 0fr;
+		margin-top: 0;
+		opacity: 0;
+	}
+	.schedule-month-inner {
+		overflow: hidden;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+</style>

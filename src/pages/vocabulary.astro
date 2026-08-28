@@ -1,0 +1,71 @@
+---
+import { PageHeader } from "@components/features/page-header";
+import HomeTabBar from "@components/features/posts/HomeTabBar.astro";
+import { VocabularyToolbar, WordCard } from "@components/features/vocabulary";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+
+import { siteConfig } from "../config";
+import { wordList } from "../data/wordlist";
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
+
+if (!siteConfig.featurePages.vocabulary) {
+	return Astro.redirect("/404/");
+}
+
+const title = i18n(I18nKey.vocabulary);
+const subtitle = i18n(I18nKey.vocabularySubtitle);
+---
+
+<MainGridLayout title={title} description={subtitle}>
+	<script>
+		import("../scripts/right-sidebar-layout.js");
+	</script>
+
+	<!-- 单词本排序/搜索交互（Swup 兼容的经典脚本，切页时重新执行） -->
+	<script is:inline src="/js/vocabulary-page-handler.js"></script>
+
+	<HomeTabBar />
+
+	{wordList.length > 0 && <VocabularyToolbar />}
+
+	<div
+		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32"
+	>
+		<div class="card-base z-10 px-6 sm:px-9 py-6 relative w-full">
+			<PageHeader title={title} subtitle={subtitle} />
+
+			{
+				wordList.length > 0 ? (
+					<>
+						<div
+							class="grid grid-cols-1 sm:grid-cols-2 gap-3"
+							id="vocabulary-grid"
+						>
+							{wordList.map((item) => (
+								<WordCard word={item} />
+							))}
+						</div>
+						<div id="vocab-empty" class="text-center py-12 hidden">
+							<p class="text-black/40 dark:text-white/40 text-lg">
+								{i18n(I18nKey.noData)}
+							</p>
+						</div>
+					</>
+				) : (
+					<div class="text-center py-16">
+						<iconify-icon
+							icon="material-symbols:menu-book"
+							width="64"
+							height="64"
+							class="text-black/15 dark:text-white/15 mb-4"
+						></iconify-icon>
+						<p class="text-black/40 dark:text-white/40 text-lg">
+							{i18n(I18nKey.noData)}
+						</p>
+					</div>
+				)
+			}
+		</div>
+	</div>
+</MainGridLayout>

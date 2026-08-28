@@ -1,0 +1,59 @@
+// 单词本数据配置文件
+// 用于"单词本"页面，一行展示两个单词（单词、中文翻译、词性）
+// 增删单词只需修改下方数组；本文件位于内容仓库（支持内容分离）
+
+export interface Word {
+	word: string; // 单词本身
+	translation: string; // 中文翻译
+	pos: string; // 词性，如 "n."、"v."、"adj."、"adv."
+}
+
+export const wordList: Word[] = [
+	{ word: "inspiration", translation: "好主意, 灵感", pos: "n." },
+	{ word: "access", translation: "使用, 访问; 机会, 通道", pos: "v. / n." },
+	{ word: "detect", translation: "发现, 查明", pos: "v." },
+	{ word: "assistant", translation: "助理", pos: "n." },
+	{ word: "insight", translation: "洞察力, 了解", pos: "n." },
+	{ word: "deserve", translation: "值得", pos: "v." },
+	{ word: "reliable", translation: "可靠的", pos: "adj." },
+	{ word: "livelihood", translation: "生计", pos: "n." },
+	{ word: "analysis", translation: "分析", pos: "n." },
+	{ word: "prediction", translation: "预告, 预测", pos: "n." },
+	{ word: "demand", translation: "需求", pos: "n." },
+	{ word: "supply", translation: "补给", pos: "n." },
+	{ word: "inform", translation: "通知, 了解, 影响", pos: "v." },
+	{ word: "trend", translation: "趋势", pos: "n." },
+	{ word: "track", translation: "轨道, 踪迹; 跟踪", pos: "n. / v." },
+	{ word: "recur", translation: "再发生, 重现", pos: "v." },
+	{ word: "recurring", translation: "反复的, 周期的", pos: "adj." },
+	{ word: "monitor", translation: "监视, 检查; 监视器", pos: "v. / n." },
+	{ word: "issue", translation: "问题, 期(周期的期)", pos: "n." },
+	{ word: "sustainable", translation: "可持续的", pos: "adj." },
+	{ word: "enthusiast", translation: "热心者", pos: "n." },
+	{ word: "gap", translation: "缺口, 间隙", pos: "n." },
+	{ word: "prioritize", translation: "优先处理", pos: "v." },
+	{ word: "workforce", translation: "全体员工, 劳动力", pos: "n." },
+	{ word: "enthusiastic", translation: "热情的", pos: "adj." },
+	{ word: "eager", translation: "热情的", pos: "adj." },
+	{ word: "complicated", translation: "复杂的", pos: "adj." },
+	{ word: "assign", translation: "分配", pos: "v." },
+	{ word: "hesitate", translation: "犹豫", pos: "v." },
+	{ word: "previous", translation: "以往的", pos: "adj." },
+	{ word: "typical", translation: "典型的", pos: "adj." },
+	{ word: "flexible", translation: "灵活的, 柔韧的", pos: "adj." },
+	{ word: "confuse", translation: "混淆, 迷惑", pos: "v." },
+	{ word: "appointment", translation: "约定", pos: "n." },
+	{ word: "interaction", translation: "相互影响", pos: "n." },
+	{ word: "arrangement", translation: "安排", pos: "n." },
+	{ word: "cooperation", translation: "合作, 配合", pos: "n." },
+	{ word: "impulse", translation: "冲动, 冲量", pos: "n." },
+	{ word: "purchase", translation: "购买", pos: "n." },
+	{ word: "essential", translation: "必需的", pos: "adj." },
+	{ word: "architectural", translation: "建筑的", pos: "adj." },
+	{ word: "grab", translation: "抓", pos: "v." },
+	{ word: "subtly", translation: "微妙地", pos: "adv." },
+	{ word: "tempt", translation: "引诱", pos: "v." },
+	{ word: "aisle", translation: "过道", pos: "n." },
+	{ word: "psychological", translation: "心理的", pos: "adj." },
+	{ word: "frequent", translation: "频繁的; 常去", pos: "adj. / v." },
+];
