@@ -16,6 +16,12 @@ const ENABLE_CONTENT_SYNC = process.env.ENABLE_CONTENT_SYNC !== "false"; // 默�
 const CONTENT_REPO_URL = process.env.CONTENT_REPO_URL || "";
 const CONTENT_DIR = process.env.CONTENT_DIR || path.join(rootDir, "content");
 
+// 日志脱敏：隐藏 URL 中的凭据（全局匹配，兼容命令行/错误消息中任意位置的 URL）
+// https://token@github.com/... → https://***@github.com/...
+function maskUrl(url) {
+	return url.replace(/(https?:\/\/)[^@/\s]+@/g, "$1***@");
+}
+
 console.log("开始同步内容...\n");
 
 // 检查是否启用内容分离
@@ -42,14 +48,15 @@ if (!fs.existsSync(CONTENT_DIR)) {
 	}
 
 	try {
-		console.log(`正在克隆内容仓库：${CONTENT_REPO_URL}`);
+		console.log(`正在克隆内容仓库：${maskUrl(CONTENT_REPO_URL)}`);
+		// stdio: "pipe" 捕获 git 输出，避免含 token 的错误信息直接透传到构建日志
 		execSync(`git clone --depth 1 ${CONTENT_REPO_URL} ${CONTENT_DIR}`, {
-			stdio: "inherit",
+			stdio: "pipe",
 			cwd: rootDir,
 		});
 		console.log("内容仓库克隆成功");
 	} catch (error) {
-		console.error("克隆失败：", error.message);
+		console.error("克隆失败：", maskUrl(error.message));
 		process.exit(1);
 	}
 } else {
@@ -60,21 +67,22 @@ if (!fs.existsSync(CONTENT_DIR)) {
 			console.log("正在拉取最新内容...");
 			// fetch + reset 强制与远程一致：
 			// 不依赖分支 upstream tracking，也不会因合并冲突失败
+			// stdio: "pipe" 捕获 git 输出，避免含 token 的错误信息直接透传到构建日志
 			execSync("git fetch origin", {
-				stdio: "inherit",
+				stdio: "pipe",
 				cwd: CONTENT_DIR,
 			});
 			execSync("git reset --hard origin/HEAD", {
-				stdio: "inherit",
+				stdio: "pipe",
 				cwd: CONTENT_DIR,
 			});
 			execSync("git clean -fd", {
-				stdio: "inherit",
+				stdio: "pipe",
 				cwd: CONTENT_DIR,
 			});
 			console.log("内容更新成功");
 		} catch (error) {
-			console.warn("内容更新失败：", error.message);
+			console.warn("内容更新失败：", maskUrl(error.message));
 			console.warn("将沿用已有内容继续构建（可能不是最新）");
 		}
 	}
