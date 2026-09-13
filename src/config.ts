@@ -51,7 +51,7 @@ export const siteConfig: SiteConfig = {
 		albums: true, // 相册页面开关
 		devices: false, // 设备页面开关
 		footprint: true, // 足迹页面开关
-		vocabulary: true, // 单词本页面开关
+		vocabulary: false, // 单词本页面开关
 		schedule: true, // 日程簿页面开关
 		bookshelf: true, // 书架页面开关
 	},
@@ -125,7 +125,7 @@ export const siteConfig: SiteConfig = {
 				name: "单词本",
 				url: "/vocabulary/",
 				icon: "material-symbols:menu-book",
-				enable: true,
+				enable: false,
 			},
 			{
 				name: "日程簿",
